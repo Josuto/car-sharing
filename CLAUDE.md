@@ -14,7 +14,7 @@ Use the skills specified at the .claude/skills folder located at the root of the
 
 | Skill name | When to use it |
 |---|---|
-| tdd | Before starting the implementation of any new feature |
+| tdd | During solution implementation or refactoring |
 | clean-code-principles | During solution planification or refactoring, when discussing design decisions |
 | clean-ddd-hexagonal | During solution planification or refactoring, when discussing design decisions |
 | effective-java | During solution implementation or refactoring |
