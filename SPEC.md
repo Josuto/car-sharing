@@ -6,13 +6,13 @@ App enables owners to lend cars to borrowers. MVP focuses on core backend loops 
 
 **Core Features:** User management, car registration, car booking, payments.
 
-**Tech Stack & Infrastructure:** Java Spring Boot based multi-module application with Gradle as package manager, SQLite, Kafka, Spring Cloud Gateway, Docker, Kubernetes (local execution), GitHub Actions (CI).
+**Tech Stack & Infrastructure:** Java Spring Boot based multi-module application with Gradle as package manager, SQLite, RabbitMQ, Spring Cloud Gateway, Docker, Kubernetes (local execution), GitHub Actions (CI).
 
 ---
 
 ## 2. Architecture
 
-**High-Level Overview:** Gateway routes REST (HTTP) requests. READs are synchronous REST. WRITEs propagate asynchronously via Kafka. Payments service integrates with a mocked external banking service for balance processing.
+**High-Level Overview:** Gateway routes REST (HTTP) requests. READs are synchronous REST. WRITEs propagate asynchronously via RabbitMQ. Payments service integrates with a mocked external banking service for balance processing.
 
 **Hexagonal Architecture:** Ports/adapters isolate domain logic from infrastructure.
 
@@ -46,7 +46,7 @@ App enables owners to lend cars to borrowers. MVP focuses on core backend loops 
 
 ### 3.2 Implementation Details
 
-- **Data Synchronization:** Booking service keeps synchronized local DB copy of cars from Registry via Kafka.
+- **Data Synchronization:** Booking service keeps synchronized local DB copy of cars from Registry via RabbitMQ.
 - **Concurrency:** Pessimistic DB locking prevents double-booking identical cars.
 - **Saga Orchestrator:** Located in Booking Service. Flow: Receives booking → Sets Pending → Emits async payment request → Listens for payment result → Confirms or Cancels booking.
 - **Security:** Generates UUIDs for entities. Returns generic 400 errors for invalid bookings.
@@ -59,8 +59,31 @@ App enables owners to lend cars to borrowers. MVP focuses on core backend loops 
 |---|---|
 | Performance | Local car copy in Booking prevents synchronous cross-service joins. |
 | Security | UUID primary keys prevent enumeration attacks. |
-| Reliability | Saga pattern ensures distributed transaction integrity. Kafka handles async delivery. |
+| Reliability | Saga pattern ensures distributed transaction integrity. RabbitMQ handles async delivery. |
 | Maintainability | Single Responsibility Principle. Independent schemas. Hexagonal architecture. |
+| Observability | Structured logs, distributed traces, and custom business metrics per service. See §4.1. |
+
+---
+
+### 4.1 Observability
+
+Each service emits three signals:
+
+**Logs** — SLF4J + Logback with structured JSON output. Log levels:
+- `INFO`: booking state transitions, payment outcomes, car registrations.
+- `WARN`: retryable conditions (e.g., RabbitMQ redelivery, transient banking mock failure).
+- `ERROR`: unhandled exceptions, Saga compensation triggers, persistence failures.
+
+**Traces** — OpenTelemetry Java agent (zero-code instrumentation) propagates trace context across HTTP and RabbitMQ. Each inbound Gateway request and each RabbitMQ consumer handler starts a span; Saga steps are child spans.
+
+**Metrics** — Suggested custom metrics:
+- `bookings.created.total` (counter)
+- `bookings.saga.duration` (timer — PENDING → terminal state)
+- `payments.failed.total` (counter)
+- `cars.available` (gauge)
+- System availability (percentage)
+
+**Local tooling** — [OpenObserve](https://github.com/openobserve/openobserve) runs as a **single Docker container** (port 5080) and ingests all three signals via OTLP. Added to `docker-compose.yml`. Services push logs and traces via the OTel agent.
 
 ---
 
@@ -165,10 +188,10 @@ CREATE TABLE transactions (
 ### Potential Issues
 
 - Unauthenticated user management endpoints pose a security risk, even in MVP.
-- Eventual consistency delay between a car being registered/returned and it appearing in the GET `/cars` response due to Kafka propagation. Possible complementary solution approaches include Optimistic UI (frontend), Double-Checks (backend integrity), and Versioning (Kafka ordering).
+- Eventual consistency delay between a car being registered/returned and it appearing in the GET `/cars` response due to RabbitMQ propagation. Possible complementary solution approaches include Optimistic UI (frontend), Double-Checks (backend integrity), and Versioning (message ordering).
 
 ### Improvements
 
 - Add basic API Key auth to Gateway for admin endpoints.
-- Define a dead-letter queue (DLQ) strategy in Kafka or the Outbox pattern for failed sync events between Registry and Booking services.
+- Define a dead-letter queue (DLQ) strategy in RabbitMQ or the Outbox pattern for failed sync events between Registry and Booking services.
 - Define explicit mock responses and latency profiles for the external banking transfer processing service to simulate real-world timeouts.
