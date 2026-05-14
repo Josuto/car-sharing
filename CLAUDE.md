@@ -8,6 +8,17 @@ Whenever working with any third-party library or something similar, you MUST loo
 
 Keep your replies extremely concise and focus on conveying the key information. No unnecessary fluff, no long code snippets.
 
+## Skills
+
+Use the skills specified at the .claude/skills folder located at the root of the project as appropriate. Do not load extra skill resources (e.g., references, rules, examples, etc.) unless required.
+
+| Skill name | When to use it |
+|---|---|
+| tdd | Before starting the implementation of any new feature |
+| clean-code-principles | During solution planification or refactoring, when discussing design decisions |
+| clean-ddd-hexagonal | During solution planification or refactoring, when discussing design decisions |
+| effective-java | During solution implementation or refactoring |
+
 ## Build & Test Commands
 
 ```bash
@@ -21,10 +32,10 @@ Keep your replies extremely concise and focus on conveying the key information. 
 ./gradlew test
 
 # Run a single test class
-./gradlew test --tests "com.example.vs.SomeTest"
+./gradlew test --tests "com.example.cs.SomeTest"
 
 # Run a single test method
-./gradlew test --tests "com.example.vs.SomeTest.methodName"
+./gradlew test --tests "com.example.cs.SomeTest.methodName"
 
 # Clean build
 ./gradlew clean build
@@ -38,27 +49,27 @@ This is a **multi-service car sharing platform**. The codebase is currently a sk
 |---|---|
 | **Gateway** | Spring Cloud Gateway — routes all inbound HTTP requests |
 | **User Management** | Admin CRUD for users; tracks debtor status |
-| **Car Registry** | Car registration; publishes car events to Kafka |
+| **Car Registry** | Car registration; publishes car events to RabbitMQ |
 | **Car Booking** | Booking lifecycle; owns the Saga orchestrator |
 | **Payments** | Account balances; integrates with mocked external banking service |
 
-### Key Architectural Decisions
+## Key Architectural Decisions
 
 - **Hexagonal architecture** per service — domain logic isolated from infrastructure via ports/adapters.
-- **READ = synchronous REST**, **WRITE = async via Kafka**. The Booking service maintains a local copy of cars (synced from Registry via Kafka) to avoid cross-service joins.
+- **READ = synchronous REST**, **WRITE = async via RabbitMQ**. The Booking service maintains a local copy of cars (synced from Registry via RabbitMQ) to avoid cross-service joins.
 - **Saga pattern** lives in the Booking service: `PENDING → payment request → ACTIVE or CANCELLED`.
 - **Strict DB isolation**: each service has its own SQLite schema; no cross-schema joins.
 - **Pessimistic locking** on car rows to prevent double-booking.
 - **CQRS read model** in Booking for the `GET /cars` (available cars) query.
 
-### Base Package
+## Base Package
 
-`com.example.vs` — each service will live under its own sub-package (e.g., `com.example.vs.booking`, `com.example.vs.payments`).
+`com.example.cs` — each service will live under its own sub-package (e.g., `com.example.cs.booking`, `com.example.cs.payments`).
 
-### Tech Stack
+## Tech Stack
 
 - Java 21, Spring Boot 4.0.5, Gradle 9.4.1
-- SQLite (one schema per service), Kafka, Spring Cloud Gateway
+- SQLite (one schema per service), RabbitMQ, Spring Cloud Gateway
 - Docker, Kubernetes
 - GitHub Actions (CI)
 - JUnit
