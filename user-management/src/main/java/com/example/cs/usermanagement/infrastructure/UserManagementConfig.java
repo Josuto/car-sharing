@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class UserManagementConfig {
 
-    @Bean
-    CreateUserUseCase createUserUseCase(UserRepository repository, UserEventPublisher publisher) {
-        return new CreateUserHandler(repository, publisher);
-    }
+  @Bean
+  CreateUserUseCase createUserUseCase(UserRepository repository, UserEventPublisher publisher) {
+    return new CreateUserHandler(repository, publisher);
+  }
 
-    @Bean
-    DeleteUserUseCase deleteUserUseCase(UserRepository repository) {
-        return new DeleteUserHandler(repository);
-    }
+  @Bean
+  DeleteUserUseCase deleteUserUseCase(UserRepository repository) {
+    return new DeleteUserHandler(repository);
+  }
 }

@@ -8,9 +8,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 class UserManagementApplicationTests {
 
-	@MockitoBean
-	UserEventPublisher userEventPublisher;
+  @MockitoBean UserEventPublisher userEventPublisher;
 
-	@Test
-	void contextLoads() {}
+  @Test
+  void contextLoads() {}
 }

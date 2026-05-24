@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class RabbitMqUserEventPublisher implements UserEventPublisher {
 
-    static final String EXCHANGE = "user-events";
+  static final String EXCHANGE = "user-events";
 
-    private final RabbitTemplate rabbitTemplate;
+  private final RabbitTemplate rabbitTemplate;
 
-    @Override
-    public void publish(Object event) {
-        rabbitTemplate.convertAndSend(EXCHANGE, event.getClass().getSimpleName(), event);
-    }
+  @Override
+  public void publish(Object event) {
+    rabbitTemplate.convertAndSend(EXCHANGE, event.getClass().getSimpleName(), event);
+  }
 }
