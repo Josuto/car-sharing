@@ -1,6 +1,7 @@
 package com.example.cs.usermanagement.domain;
 
 import com.example.cs.common.BorrowerFlaggedAsDebtor;
+import com.example.cs.common.UserCreated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +40,9 @@ public class User {
       throw new IllegalArgumentException("Name must not be blank");
     if (surname == null || surname.isBlank())
       throw new IllegalArgumentException("Surname must not be blank");
-    return new User(id, username, name, surname, false, false);
+    var user = new User(id, username, name, surname, false, false);
+    user.domainEvents.add(new UserCreated(id.toString(), username, name, surname));
+    return user;
   }
 
   public static User reconstitute(

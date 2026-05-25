@@ -1,6 +1,5 @@
 package com.example.cs.usermanagement.application;
 
-import com.example.cs.common.UserCreated;
 import com.example.cs.usermanagement.domain.User;
 import com.example.cs.usermanagement.domain.UserEventPublisher;
 import com.example.cs.usermanagement.domain.UserRepository;
@@ -18,8 +17,7 @@ public class CreateUserHandler implements CreateUserUseCase {
     var user =
         User.create(UUID.randomUUID(), command.username(), command.name(), command.surname());
     repository.save(user);
-    publisher.publish(
-        new UserCreated(user.id().toString(), user.username(), user.name(), user.surname()));
+    user.pullDomainEvents().forEach(publisher::publish);
     return user;
   }
 }

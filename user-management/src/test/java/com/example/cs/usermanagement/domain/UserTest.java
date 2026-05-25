@@ -4,13 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import com.example.cs.common.BorrowerFlaggedAsDebtor;
+import com.example.cs.common.UserCreated;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class UserTest {
 
   @Test
-  void create_withValidData_returnsActiveNonDeletedNonDebtorUser() {
+  void create_withValidData_returnsActiveNonDeletedNonDebtorUserAndRaisesUserCreatedEvent() {
     var user = User.create(UUID.randomUUID(), "johndoe", "John", "Doe");
 
     assertThat(user.username()).isEqualTo("johndoe");
@@ -18,6 +19,7 @@ class UserTest {
     assertThat(user.surname()).isEqualTo("Doe");
     assertThat(user.isDebtor()).isFalse();
     assertThat(user.isDeleted()).isFalse();
+    assertThat(user.pullDomainEvents()).singleElement().isInstanceOf(UserCreated.class);
   }
 
   @Test
@@ -40,7 +42,7 @@ class UserTest {
 
   @Test
   void flagAsDebtor_setsDebtorAndRaisesBorrowerFlaggedAsDebtorEvent() {
-    var user = User.create(UUID.randomUUID(), "johndoe", "John", "Doe");
+    var user = User.reconstitute(UUID.randomUUID(), "johndoe", "John", "Doe", false, false);
 
     user.flagAsDebtor();
 
