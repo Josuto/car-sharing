@@ -7,4 +7,5 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.xerial:sqlite-jdbc'
 	implementation 'org.hibernate.orm:hibernate-community-dialects'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }
