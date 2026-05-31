@@ -26,7 +26,9 @@ App enables owners to lend cars to borrowers. MVP focuses on core backend loops 
 
 #### User Management Service
 - Admins create, update, delete users via unauthenticated endpoints.
-- Manages user identity (username, name, surname, debtor status).
+- Manages user identity (username, name, surname, debtor status, bank account number).
+- Bank account is required at creation and can be updated at any time via `PUT /users/{id}`.
+- Emits `UserBankAccountChanged` when a user's bank account is updated (consumed by Payments only).
 
 #### Car Registry Service
 - Owners register cars (type, registration number).
@@ -35,14 +37,16 @@ App enables owners to lend cars to borrowers. MVP focuses on core backend loops 
 #### Car Booking Service
 - Provides list of available cars.
 - Processes bookings (1–15 days max). Enforces 1 active booking per borrower.
-- **Handle returns & availability:** Every time a borrower books a car, a new booking instance is created. This instance is updated with any booking-related event (e.g., returned, cancelled due to insufficient funds). 
+- **Handle returns & availability:** Every time a borrower books a car, a new booking instance is created. This instance is updated with any booking-related event (e.g., returned, cancelled due to insufficient funds).
 - The logic to obtain available cars searches over all bookings to determine which cars display availability in their status.
 - Unused days not refunded. Flags borrower as debtor via User Management if returned late.
 
 #### Payments Service
-- Manages user account balances.
+- Maintains a local account record per user, storing the bank account number received from User Management events.
 - Calculates booking fee (10 EUR × days).
-- Deducts fee from borrower account balance. Integrates with mocked external banking transfer processing service.
+- Charges fee to the borrower's linked bank account by calling an external PSP. The PSP returns `200 OK` (success) or `409 Conflict` (insufficient funds).
+- Local account balances are **not** tracked — the PSP is the source of truth for user balances.
+- Emits `PaymentProcessed(bookingId, SUCCESS|FAILED)` after each payment attempt, regardless of outcome.
 
 ### 3.2 Implementation Details
 
@@ -97,9 +101,12 @@ CREATE TABLE users (
     username VARCHAR UNIQUE,
     name VARCHAR,
     surname VARCHAR,
+    bank_account VARCHAR NOT NULL,
     is_debtor BOOLEAN DEFAULT FALSE
 );
 ```
+
+> **Note:** Storing `bank_account` here is an MVP simplification. See ADR-001 in user-management.
 
 ### Car Registry DB
 
@@ -143,7 +150,7 @@ CREATE TABLE bookings (
 CREATE TABLE accounts (
     id UUID PRIMARY KEY,
     user_id UUID,
-    balance DECIMAL(10,2)
+    bank_account VARCHAR NOT NULL
 );
 
 CREATE TABLE transactions (
@@ -164,7 +171,7 @@ CREATE TABLE transactions (
 | Method | Path | Description | Responses |
 |---|---|---|---|
 | `POST` | `/users` | Create new user | `201 Created`, `400 Bad Request` |
-| `PUT` | `/users/{id}` | Update user details | `200 OK`, `400 Bad Request`, `404 Not Found` |
+| `PUT` | `/users/{id}` | Update user details (name, surname, bank account) | `200 OK`, `400 Bad Request`, `404 Not Found` |
 | `DELETE` | `/users/{id}` | Delete user | `204 No Content`, `404 Not Found` |
 
 ### Car Registry

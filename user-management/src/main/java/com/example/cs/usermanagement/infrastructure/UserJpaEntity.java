@@ -26,6 +26,9 @@ class UserJpaEntity {
   private String surname;
 
   @Column(nullable = false)
+  private String bankAccount;
+
+  @Column(nullable = false)
   private boolean isDebtor;
 
   @Column(nullable = false)
@@ -37,11 +40,13 @@ class UserJpaEntity {
         user.username(),
         user.name(),
         user.surname(),
+        user.bankAccount(),
         user.isDebtor(),
         user.isDeleted());
   }
 
   User toDomain() {
-    return User.reconstitute(UUID.fromString(id), username, name, surname, isDebtor, isDeleted);
+    return User.reconstitute(
+        UUID.fromString(id), username, name, surname, bankAccount, isDebtor, isDeleted);
   }
 }

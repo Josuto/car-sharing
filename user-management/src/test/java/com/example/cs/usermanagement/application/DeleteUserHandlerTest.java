@@ -17,7 +17,7 @@ class DeleteUserHandlerTest {
 
   @Test
   void handle_softDeletesExistingUser() {
-    var user = User.create(UUID.randomUUID(), "johndoe", "John", "Doe");
+    var user = User.create(UUID.randomUUID(), "johndoe", "John", "Doe", "ES1234567890");
     var repository = mock(UserRepository.class);
     when(repository.findById(user.id())).thenReturn(Optional.of(user));
     var handler = new DeleteUserHandler(repository);

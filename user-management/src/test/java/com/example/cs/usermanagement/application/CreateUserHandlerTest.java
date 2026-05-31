@@ -19,11 +19,18 @@ class CreateUserHandlerTest {
     var publisher = mock(UserEventPublisher.class);
     var handler = new CreateUserHandler(repository, publisher);
 
-    var result = handler.handle(new CreateUserCommand("johndoe", "John", "Doe"));
+    var result = handler.handle(new CreateUserCommand("johndoe", "John", "Doe", "ES1234567890"));
 
     verify(repository)
-        .save(argThat(u -> u.username().equals("johndoe") && !u.isDebtor() && !u.isDeleted()));
+        .save(
+            argThat(
+                u ->
+                    u.username().equals("johndoe")
+                        && u.bankAccount().equals("ES1234567890")
+                        && !u.isDebtor()
+                        && !u.isDeleted()));
     verify(publisher).publish(any(UserCreated.class));
     assertThat(result.username()).isEqualTo("johndoe");
+    assertThat(result.bankAccount()).isEqualTo("ES1234567890");
   }
 }
