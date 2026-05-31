@@ -2,7 +2,6 @@ package com.example.cs.common;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +14,7 @@ class EventDtosTest {
     assertNotNull(new UserBankAccountChanged("id", "ES1234567890"));
     assertNotNull(
         new BookingPaymentRequested(
-            "bookingId",
-            "borrowerId",
-            "carId",
-            LocalDate.now(),
-            LocalDate.now().plusDays(3),
-            BigDecimal.valueOf(30)));
+            "bookingId", "borrowerId", "carId", LocalDate.now(), LocalDate.now().plusDays(3)));
     assertNotNull(new PaymentProcessed("bookingId", true));
     assertNotNull(new BorrowerFlaggedAsDebtor("userId"));
   }
