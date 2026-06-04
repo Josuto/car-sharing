@@ -12,10 +12,12 @@ class RabbitMqConfig {
 
   static final String CAR_EVENTS_EXCHANGE = "car-events";
   static final String USER_EVENTS_EXCHANGE = "user-events";
+  static final String PAYMENT_EVENTS_EXCHANGE = "payment-events";
 
   static final String CAR_REGISTERED_QUEUE = "booking.car-registered";
   static final String USER_CREATED_QUEUE = "booking.user-created";
   static final String BORROWER_FLAGGED_AS_DEBTOR_QUEUE = "booking.borrower-flagged-as-debtor";
+  static final String PAYMENT_PROCESSED_QUEUE = "booking.payment-processed";
 
   @Bean
   DirectExchange carEventsExchange() {
@@ -25,6 +27,11 @@ class RabbitMqConfig {
   @Bean
   DirectExchange userEventsExchange() {
     return new DirectExchange(USER_EVENTS_EXCHANGE);
+  }
+
+  @Bean
+  DirectExchange paymentEventsExchange() {
+    return new DirectExchange(PAYMENT_EVENTS_EXCHANGE);
   }
 
   @Bean
@@ -43,6 +50,11 @@ class RabbitMqConfig {
   }
 
   @Bean
+  Queue paymentProcessedQueue() {
+    return new Queue(PAYMENT_PROCESSED_QUEUE);
+  }
+
+  @Bean
   Binding carRegisteredBinding() {
     return BindingBuilder.bind(carRegisteredQueue()).to(carEventsExchange()).with("CarRegistered");
   }
@@ -57,5 +69,12 @@ class RabbitMqConfig {
     return BindingBuilder.bind(borrowerFlaggedAsDebtorQueue())
         .to(userEventsExchange())
         .with("BorrowerFlaggedAsDebtor");
+  }
+
+  @Bean
+  Binding paymentProcessedBinding() {
+    return BindingBuilder.bind(paymentProcessedQueue())
+        .to(paymentEventsExchange())
+        .with("PaymentProcessed");
   }
 }
