@@ -201,4 +201,5 @@ CREATE TABLE transactions (
 
 - Add basic API Key auth to Gateway for admin endpoints.
 - Define a dead-letter queue (DLQ) strategy in RabbitMQ or the Outbox pattern for failed sync events between Registry and Booking services.
+- Apply the Outbox pattern to the two dual-write points in the Saga: `CreateBookingHandler` (save booking + publish `BookingPaymentRequested`) and `ProcessPaymentHandler` (save transaction + publish `PaymentProcessed`). If the DB write succeeds but the publish fails at either point, the event is silently lost and the Saga stalls. See ADR-004 (Known Gap section) for details.
 - Define explicit mock responses and latency profiles for the external banking transfer processing service to simulate real-world timeouts.

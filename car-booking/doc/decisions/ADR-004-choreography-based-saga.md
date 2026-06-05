@@ -93,3 +93,25 @@ compensating transactions on failure. The full workflow is encoded in the orches
     MVP limitation and documented in ADR-003.
   - As the number of Saga participants grows, the event graph becomes harder to follow. Revisit
     this decision if a third participant is introduced.
+
+## Known Gap: dual-write risk at event publication points
+
+The Saga has two points where a database write and a RabbitMQ publish are performed as separate,
+non-atomic operations:
+
+1. **Car Booking — `CreateBookingHandler`:** `bookingRepository.save(booking)` followed by
+   `publisher.publish(BookingPaymentRequested)`.
+2. **Payments — `ProcessPaymentHandler`:** `transactionRepository.save(transaction)` followed by
+   `publisher.publish(PaymentProcessed)`.
+
+If the DB write succeeds but the publish fails at either point, the event is lost and the Saga
+stalls. This is the same failure mode documented in ADR-003 for stuck `PENDING` bookings.
+
+The **Outbox pattern** would eliminate this risk by writing the event payload to an `outbox` table
+in the same DB transaction as the business record, then having a background poller publish and
+delete outbox rows. Atomicity is guaranteed at the DB level; the broker becomes a best-effort
+delivery target.
+
+This is not implemented in the MVP due to the added complexity (new table, poller, idempotent
+consumer handling). It is listed as a potential improvement in SPEC.md §7 and should be revisited
+before moving toward production use.
