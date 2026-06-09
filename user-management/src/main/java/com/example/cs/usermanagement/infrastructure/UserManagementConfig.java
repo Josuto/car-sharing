@@ -4,6 +4,8 @@ import com.example.cs.usermanagement.application.CreateUserHandler;
 import com.example.cs.usermanagement.application.CreateUserUseCase;
 import com.example.cs.usermanagement.application.DeleteUserHandler;
 import com.example.cs.usermanagement.application.DeleteUserUseCase;
+import com.example.cs.usermanagement.application.UpdateDebtorStatusHandler;
+import com.example.cs.usermanagement.application.UpdateDebtorStatusUseCase;
 import com.example.cs.usermanagement.application.UpdateUserHandler;
 import com.example.cs.usermanagement.application.UpdateUserUseCase;
 import com.example.cs.usermanagement.domain.UserEventPublisher;
@@ -27,5 +29,10 @@ class UserManagementConfig {
   @Bean
   DeleteUserUseCase deleteUserUseCase(UserRepository repository) {
     return new DeleteUserHandler(repository);
+  }
+
+  @Bean
+  UpdateDebtorStatusUseCase updateDebtorStatusUseCase(UserRepository repository) {
+    return new UpdateDebtorStatusHandler(repository);
   }
 }

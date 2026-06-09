@@ -4,8 +4,11 @@ import com.example.cs.booking.application.AvailableCarsHandler;
 import com.example.cs.booking.application.AvailableCarsUseCase;
 import com.example.cs.booking.application.CreateBookingHandler;
 import com.example.cs.booking.application.CreateBookingUseCase;
+import com.example.cs.booking.application.FlagLateReturnDebtorsHandler;
 import com.example.cs.booking.application.PaymentResultHandler;
 import com.example.cs.booking.application.PaymentResultUseCase;
+import com.example.cs.booking.application.ReturnCarHandler;
+import com.example.cs.booking.application.ReturnCarUseCase;
 import com.example.cs.booking.domain.BookingEventPublisher;
 import com.example.cs.booking.domain.BookingRepository;
 import com.example.cs.booking.domain.CarRepository;
@@ -34,5 +37,19 @@ class CarBookingConfig {
   @Bean
   PaymentResultUseCase paymentResultUseCase(BookingRepository bookingRepository) {
     return new PaymentResultHandler(bookingRepository);
+  }
+
+  @Bean
+  ReturnCarUseCase returnCarUseCase(BookingRepository bookingRepository) {
+    return new ReturnCarHandler(bookingRepository);
+  }
+
+  @Bean
+  FlagLateReturnDebtorsHandler flagLateReturnDebtorsHandler(
+      BookingRepository bookingRepository,
+      UserRepository userRepository,
+      BookingEventPublisher bookingEventPublisher) {
+    return new FlagLateReturnDebtorsHandler(
+        bookingRepository, userRepository, bookingEventPublisher);
   }
 }

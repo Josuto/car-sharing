@@ -19,4 +19,8 @@ public class User {
   public static User reconstitute(UUID id, boolean isDebtor) {
     return new User(id, isDebtor);
   }
+
+  public User flagAsDebtor() {
+    return new User(this.id, true);
+  }
 }

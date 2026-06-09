@@ -3,7 +3,6 @@ package com.example.cs.usermanagement.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import com.example.cs.common.BorrowerFlaggedAsDebtor;
 import com.example.cs.common.UserBankAccountChanged;
 import com.example.cs.common.UserCreated;
 import java.util.UUID;
@@ -83,7 +82,7 @@ class UserTest {
   }
 
   @Test
-  void flagAsDebtor_setsDebtorAndRaisesBorrowerFlaggedAsDebtorEvent() {
+  void flagAsDebtor_setsIsDebtorTrue() {
     var user =
         User.reconstitute(
             UUID.randomUUID(), "johndoe", "John", "Doe", "ES1234567890", false, false);
@@ -91,6 +90,6 @@ class UserTest {
     user.flagAsDebtor();
 
     assertThat(user.isDebtor()).isTrue();
-    assertThat(user.pullDomainEvents()).singleElement().isInstanceOf(BorrowerFlaggedAsDebtor.class);
+    assertThat(user.pullDomainEvents()).isEmpty();
   }
 }

@@ -2,6 +2,8 @@ package com.example.cs.booking.infrastructure;
 
 import com.example.cs.booking.domain.Booking;
 import com.example.cs.booking.domain.BookingRepository;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,12 @@ class BookingJpaAdapter implements BookingRepository {
   @Override
   public Optional<Booking> findOngoingByCarId(UUID carId) {
     return jpaRepository.findOngoingByCarId(carId.toString()).map(BookingJpaEntity::toDomain);
+  }
+
+  @Override
+  public List<Booking> findOverdueActive() {
+    return jpaRepository.findOverdueActive(LocalDate.now()).stream()
+        .map(BookingJpaEntity::toDomain)
+        .toList();
   }
 }

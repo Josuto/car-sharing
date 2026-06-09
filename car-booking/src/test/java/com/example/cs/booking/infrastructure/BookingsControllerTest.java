@@ -3,11 +3,14 @@ package com.example.cs.booking.infrastructure;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.cs.booking.application.CreateBookingUseCase;
+import com.example.cs.booking.application.ReturnCarUseCase;
 import com.example.cs.booking.domain.Booking;
+import com.example.cs.booking.domain.BookingNotFoundException;
 import com.example.cs.booking.domain.BookingPeriod;
 import com.example.cs.booking.domain.BookingStatus;
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ class BookingsControllerTest {
   @Autowired MockMvc mockMvc;
 
   @MockitoBean CreateBookingUseCase createBookingUseCase;
+  @MockitoBean ReturnCarUseCase returnCarUseCase;
 
   private final UUID bookingId = UUID.randomUUID();
   private final UUID carId = UUID.randomUUID();
@@ -83,5 +87,41 @@ class BookingsControllerTest {
                         .formatted(carId, borrowerId, start, end)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.error").value("borrower is a debtor"));
+  }
+
+  @Test
+  void putBooking_withActiveBooking_returns200WithUpdatedBooking() throws Exception {
+    var booking =
+        Booking.reconstitute(
+            bookingId,
+            carId,
+            borrowerId,
+            BookingPeriod.reconstitute(start.minusDays(2), end),
+            BookingStatus.RETURNED);
+    when(returnCarUseCase.handle(any())).thenReturn(booking);
+
+    mockMvc
+        .perform(put("/bookings/{id}", bookingId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(bookingId.toString()))
+        .andExpect(jsonPath("$.status").value("RETURNED"));
+  }
+
+  @Test
+  void putBooking_withNonActiveBooking_returns400() throws Exception {
+    when(returnCarUseCase.handle(any()))
+        .thenThrow(new IllegalArgumentException("Cannot return a booking with status: PENDING"));
+
+    mockMvc
+        .perform(put("/bookings/{id}", bookingId))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Cannot return a booking with status: PENDING"));
+  }
+
+  @Test
+  void putBooking_withUnknownBooking_returns404() throws Exception {
+    when(returnCarUseCase.handle(any())).thenThrow(new BookingNotFoundException(bookingId));
+
+    mockMvc.perform(put("/bookings/{id}", bookingId)).andExpect(status().isNotFound());
   }
 }

@@ -42,4 +42,13 @@ class BookingTest {
 
     assertThat(booking.status()).isEqualTo(BookingStatus.CANCELLED);
   }
+
+  @Test
+  void returnCar_setsStatusToReturned() {
+    var booking = Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.ACTIVE);
+
+    booking.returnCar();
+
+    assertThat(booking.status()).isEqualTo(BookingStatus.RETURNED);
+  }
 }

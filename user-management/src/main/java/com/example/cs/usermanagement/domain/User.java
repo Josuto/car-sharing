@@ -1,6 +1,5 @@
 package com.example.cs.usermanagement.domain;
 
-import com.example.cs.common.BorrowerFlaggedAsDebtor;
 import com.example.cs.common.UserBankAccountChanged;
 import com.example.cs.common.UserCreated;
 import java.util.ArrayList;
@@ -85,7 +84,6 @@ public class User {
 
   public void flagAsDebtor() {
     this.isDebtor = true;
-    domainEvents.add(new BorrowerFlaggedAsDebtor(id.toString()));
   }
 
   public void delete() {

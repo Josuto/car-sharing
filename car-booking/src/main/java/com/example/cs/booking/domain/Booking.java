@@ -39,4 +39,8 @@ public class Booking {
   public void cancel() {
     this.status = BookingStatus.CANCELLED;
   }
+
+  public void returnCar() {
+    this.status = BookingStatus.RETURNED;
+  }
 }

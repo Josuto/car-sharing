@@ -1,5 +1,6 @@
 package com.example.cs.booking.domain;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,6 @@ public interface BookingRepository {
   Optional<Booking> findOngoingByBorrowerId(UUID borrowerId);
 
   Optional<Booking> findOngoingByCarId(UUID carId);
+
+  List<Booking> findOverdueActive();
 }
