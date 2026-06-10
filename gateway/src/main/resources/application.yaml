@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: user_management
+              uri: http://localhost:8081
+              predicates:
+                - Path=/users,/users/**
+                - Method=POST,PUT,DELETE
+            - id: car_registry
+              uri: http://localhost:8082
+              predicates:
+                - Path=/cars
+                - Method=POST
+            - id: car_booking
+              uri: http://localhost:8083
+              predicates:
+                - Path=/cars,/bookings,/bookings/**
