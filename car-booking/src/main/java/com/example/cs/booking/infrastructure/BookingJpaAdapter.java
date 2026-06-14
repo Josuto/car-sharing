@@ -2,6 +2,7 @@ package com.example.cs.booking.infrastructure;
 
 import com.example.cs.booking.domain.Booking;
 import com.example.cs.booking.domain.BookingRepository;
+import com.example.cs.booking.domain.BookingStatus;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -42,5 +43,10 @@ class BookingJpaAdapter implements BookingRepository {
     return jpaRepository.findOverdueActive(LocalDate.now()).stream()
         .map(BookingJpaEntity::toDomain)
         .toList();
+  }
+
+  @Override
+  public long countByStatus(BookingStatus status) {
+    return jpaRepository.countByStatus(status.name());
   }
 }

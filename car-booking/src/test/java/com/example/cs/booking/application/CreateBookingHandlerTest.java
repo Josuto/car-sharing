@@ -45,12 +45,13 @@ class CreateBookingHandlerTest {
       new CreateBookingCommand(carId, borrowerId, start, end);
 
   @Test
-  void handle_withValidBooking_savesPendingBookingPublishesEventAndIncrementsCounter() {
+  void handle_withValidBooking_savesPendingBookingPublishesEventIncrementsCounterAndExposesGauge() {
     when(userRepository.findById(borrowerId))
         .thenReturn(Optional.of(User.reconstitute(borrowerId, false)));
     when(bookingRepository.findOngoingByBorrowerId(borrowerId)).thenReturn(Optional.empty());
     when(carRepository.findById(carId)).thenReturn(Optional.of(Car.reconstitute(carId, "SEDAN")));
     when(bookingRepository.findOngoingByCarId(carId)).thenReturn(Optional.empty());
+    when(bookingRepository.countByStatus(BookingStatus.PENDING)).thenReturn(1L);
 
     var booking = handler.handle(command);
 
@@ -60,6 +61,7 @@ class CreateBookingHandlerTest {
     verify(bookingRepository).save(argThat(saved -> saved.status() == BookingStatus.PENDING));
     verify(publisher).publish(any(BookingPaymentRequested.class));
     assertThat(meterRegistry.counter("bookings.created.total").count()).isEqualTo(1.0);
+    assertThat(meterRegistry.get("bookings.pending.total").gauge().value()).isEqualTo(1.0);
   }
 
   @Test

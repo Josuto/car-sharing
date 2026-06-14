@@ -4,14 +4,14 @@ import com.example.cs.booking.domain.Booking;
 import com.example.cs.booking.domain.BookingEventPublisher;
 import com.example.cs.booking.domain.BookingPeriod;
 import com.example.cs.booking.domain.BookingRepository;
+import com.example.cs.booking.domain.BookingStatus;
 import com.example.cs.booking.domain.CarRepository;
 import com.example.cs.booking.domain.UserRepository;
 import com.example.cs.common.BookingPaymentRequested;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class CreateBookingHandler implements CreateBookingUseCase {
 
   private final CarRepository carRepository;
@@ -19,6 +19,24 @@ public class CreateBookingHandler implements CreateBookingUseCase {
   private final BookingRepository bookingRepository;
   private final BookingEventPublisher publisher;
   private final MeterRegistry meterRegistry;
+
+  public CreateBookingHandler(
+      CarRepository carRepository,
+      UserRepository userRepository,
+      BookingRepository bookingRepository,
+      BookingEventPublisher publisher,
+      MeterRegistry meterRegistry) {
+    this.carRepository = carRepository;
+    this.userRepository = userRepository;
+    this.bookingRepository = bookingRepository;
+    this.publisher = publisher;
+    this.meterRegistry = meterRegistry;
+    Gauge.builder(
+            "bookings.pending.total",
+            bookingRepository,
+            r -> r.countByStatus(BookingStatus.PENDING))
+        .register(meterRegistry);
+  }
 
   @Override
   public Booking handle(CreateBookingCommand command) {

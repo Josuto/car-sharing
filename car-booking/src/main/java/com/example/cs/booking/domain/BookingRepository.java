@@ -14,4 +14,6 @@ public interface BookingRepository {
   Optional<Booking> findOngoingByCarId(UUID carId);
 
   List<Booking> findOverdueActive();
+
+  long countByStatus(BookingStatus status);
 }

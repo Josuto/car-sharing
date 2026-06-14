@@ -20,4 +20,6 @@ interface BookingJpaRepository extends JpaRepository<BookingJpaEntity, String> {
 
   @Query("SELECT b FROM BookingJpaEntity b WHERE b.status = 'ACTIVE' AND b.endDate < :today")
   List<BookingJpaEntity> findOverdueActive(LocalDate today);
+
+  long countByStatus(String status);
 }
