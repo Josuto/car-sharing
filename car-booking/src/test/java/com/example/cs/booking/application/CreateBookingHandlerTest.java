@@ -19,6 +19,8 @@ import com.example.cs.booking.domain.CarRepository;
 import com.example.cs.booking.domain.User;
 import com.example.cs.booking.domain.UserRepository;
 import com.example.cs.common.BookingPaymentRequested;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,8 +32,10 @@ class CreateBookingHandlerTest {
   private final UserRepository userRepository = mock(UserRepository.class);
   private final BookingRepository bookingRepository = mock(BookingRepository.class);
   private final BookingEventPublisher publisher = mock(BookingEventPublisher.class);
+  private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
   private final CreateBookingHandler handler =
-      new CreateBookingHandler(carRepository, userRepository, bookingRepository, publisher);
+      new CreateBookingHandler(
+          carRepository, userRepository, bookingRepository, publisher, meterRegistry);
 
   private final UUID carId = UUID.randomUUID();
   private final UUID borrowerId = UUID.randomUUID();
@@ -41,7 +45,7 @@ class CreateBookingHandlerTest {
       new CreateBookingCommand(carId, borrowerId, start, end);
 
   @Test
-  void handle_withValidBooking_savesPendingBookingAndPublishesEvent() {
+  void handle_withValidBooking_savesPendingBookingPublishesEventAndIncrementsCounter() {
     when(userRepository.findById(borrowerId))
         .thenReturn(Optional.of(User.reconstitute(borrowerId, false)));
     when(bookingRepository.findOngoingByBorrowerId(borrowerId)).thenReturn(Optional.empty());
@@ -55,6 +59,7 @@ class CreateBookingHandlerTest {
     assertThat(booking.status()).isEqualTo(BookingStatus.PENDING);
     verify(bookingRepository).save(argThat(saved -> saved.status() == BookingStatus.PENDING));
     verify(publisher).publish(any(BookingPaymentRequested.class));
+    assertThat(meterRegistry.counter("bookings.created.total").count()).isEqualTo(1.0);
   }
 
   @Test
@@ -85,6 +90,7 @@ class CreateBookingHandlerTest {
             UUID.randomUUID(),
             borrowerId,
             BookingPeriod.of(start, end),
+            Instant.now(),
             BookingStatus.ACTIVE);
     when(bookingRepository.findOngoingByBorrowerId(borrowerId))
         .thenReturn(Optional.of(existingBooking));
@@ -116,6 +122,7 @@ class CreateBookingHandlerTest {
             carId,
             UUID.randomUUID(),
             BookingPeriod.of(start, end),
+            Instant.now(),
             BookingStatus.PENDING);
     when(bookingRepository.findOngoingByCarId(carId)).thenReturn(Optional.of(ongoingBooking));
 

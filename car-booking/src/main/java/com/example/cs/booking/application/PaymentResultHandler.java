@@ -1,6 +1,9 @@
 package com.example.cs.booking.application;
 
 import com.example.cs.booking.domain.BookingRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ public class PaymentResultHandler implements PaymentResultUseCase {
   private static final Logger log = LoggerFactory.getLogger(PaymentResultHandler.class);
 
   private final BookingRepository bookingRepository;
+  private final MeterRegistry meterRegistry;
 
   @Override
   public void handle(PaymentResultCommand command) {
@@ -29,5 +33,9 @@ public class PaymentResultHandler implements PaymentResultUseCase {
       booking.get().cancel();
     }
     bookingRepository.save(booking.get());
+
+    meterRegistry
+        .timer("bookings.saga.duration")
+        .record(Duration.between(booking.get().createdAt(), Instant.now()));
   }
 }

@@ -2,6 +2,7 @@ package com.example.cs.booking.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,9 @@ class BookingTest {
 
   @Test
   void returnCar_setsStatusToReturned() {
-    var booking = Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.ACTIVE);
+    var booking =
+        Booking.reconstitute(
+            bookingId, carId, borrowerId, period, Instant.now(), BookingStatus.ACTIVE);
 
     booking.returnCar();
 

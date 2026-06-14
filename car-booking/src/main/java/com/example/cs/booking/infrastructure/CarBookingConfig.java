@@ -13,6 +13,7 @@ import com.example.cs.booking.domain.BookingEventPublisher;
 import com.example.cs.booking.domain.BookingRepository;
 import com.example.cs.booking.domain.CarRepository;
 import com.example.cs.booking.domain.UserRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,8 +21,9 @@ import org.springframework.context.annotation.Configuration;
 class CarBookingConfig {
 
   @Bean
-  AvailableCarsUseCase availableCarsUseCase(CarRepository carRepository) {
-    return new AvailableCarsHandler(carRepository);
+  AvailableCarsUseCase availableCarsUseCase(
+      CarRepository carRepository, MeterRegistry meterRegistry) {
+    return new AvailableCarsHandler(carRepository, meterRegistry);
   }
 
   @Bean
@@ -29,14 +31,16 @@ class CarBookingConfig {
       CarRepository carRepository,
       UserRepository userRepository,
       BookingRepository bookingRepository,
-      BookingEventPublisher bookingEventPublisher) {
+      BookingEventPublisher bookingEventPublisher,
+      MeterRegistry meterRegistry) {
     return new CreateBookingHandler(
-        carRepository, userRepository, bookingRepository, bookingEventPublisher);
+        carRepository, userRepository, bookingRepository, bookingEventPublisher, meterRegistry);
   }
 
   @Bean
-  PaymentResultUseCase paymentResultUseCase(BookingRepository bookingRepository) {
-    return new PaymentResultHandler(bookingRepository);
+  PaymentResultUseCase paymentResultUseCase(
+      BookingRepository bookingRepository, MeterRegistry meterRegistry) {
+    return new PaymentResultHandler(bookingRepository, meterRegistry);
   }
 
   @Bean

@@ -7,6 +7,7 @@ import com.example.cs.booking.domain.BookingRepository;
 import com.example.cs.booking.domain.CarRepository;
 import com.example.cs.booking.domain.UserRepository;
 import com.example.cs.common.BookingPaymentRequested;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ public class CreateBookingHandler implements CreateBookingUseCase {
   private final UserRepository userRepository;
   private final BookingRepository bookingRepository;
   private final BookingEventPublisher publisher;
+  private final MeterRegistry meterRegistry;
 
   @Override
   public Booking handle(CreateBookingCommand command) {
@@ -59,6 +61,7 @@ public class CreateBookingHandler implements CreateBookingUseCase {
             command.startDate(),
             command.endDate()));
 
+    meterRegistry.counter("bookings.created.total").increment();
     return booking;
   }
 }

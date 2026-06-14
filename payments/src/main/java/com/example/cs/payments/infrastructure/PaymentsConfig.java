@@ -10,6 +10,7 @@ import com.example.cs.payments.domain.AccountRepository;
 import com.example.cs.payments.domain.BankingServicePort;
 import com.example.cs.payments.domain.PaymentEventPublisher;
 import com.example.cs.payments.domain.TransactionRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,9 @@ class PaymentsConfig {
       AccountRepository accountRepository,
       TransactionRepository transactionRepository,
       BankingServicePort bankingService,
-      PaymentEventPublisher publisher) {
+      PaymentEventPublisher publisher,
+      MeterRegistry meterRegistry) {
     return new ProcessPaymentHandler(
-        accountRepository, transactionRepository, bankingService, publisher);
+        accountRepository, transactionRepository, bankingService, publisher, meterRegistry);
   }
 }

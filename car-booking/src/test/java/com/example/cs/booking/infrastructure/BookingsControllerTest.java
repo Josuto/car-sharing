@@ -13,6 +13,7 @@ import com.example.cs.booking.domain.Booking;
 import com.example.cs.booking.domain.BookingNotFoundException;
 import com.example.cs.booking.domain.BookingPeriod;
 import com.example.cs.booking.domain.BookingStatus;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,12 @@ class BookingsControllerTest {
   void postBooking_withValidRequest_returns201WithFullBookingObject() throws Exception {
     var booking =
         Booking.reconstitute(
-            bookingId, carId, borrowerId, BookingPeriod.of(start, end), BookingStatus.PENDING);
+            bookingId,
+            carId,
+            borrowerId,
+            BookingPeriod.of(start, end),
+            Instant.now(),
+            BookingStatus.PENDING);
     when(createBookingUseCase.handle(any())).thenReturn(booking);
 
     mockMvc
@@ -97,6 +103,7 @@ class BookingsControllerTest {
             carId,
             borrowerId,
             BookingPeriod.reconstitute(start.minusDays(2), end),
+            Instant.now(),
             BookingStatus.RETURNED);
     when(returnCarUseCase.handle(any())).thenReturn(booking);
 

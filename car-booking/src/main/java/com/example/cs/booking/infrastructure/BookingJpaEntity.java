@@ -6,6 +6,7 @@ import com.example.cs.booking.domain.BookingStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ class BookingJpaEntity {
   private LocalDate startDate;
   private LocalDate endDate;
   private String status;
+  private long createdAt;
 
   static BookingJpaEntity from(Booking booking) {
     return new BookingJpaEntity(
@@ -33,7 +35,8 @@ class BookingJpaEntity {
         booking.borrowerId().toString(),
         booking.period().startDate(),
         booking.period().endDate(),
-        booking.status().name());
+        booking.status().name(),
+        booking.createdAt().toEpochMilli());
   }
 
   Booking toDomain() {
@@ -42,6 +45,7 @@ class BookingJpaEntity {
         UUID.fromString(carId),
         UUID.fromString(borrowerId),
         BookingPeriod.reconstitute(startDate, endDate),
+        Instant.ofEpochMilli(createdAt),
         BookingStatus.valueOf(status));
   }
 }

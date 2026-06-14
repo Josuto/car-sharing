@@ -15,6 +15,7 @@ import com.example.cs.booking.domain.BookingStatus;
 import com.example.cs.booking.domain.User;
 import com.example.cs.booking.domain.UserRepository;
 import com.example.cs.common.BorrowerFlaggedAsDebtor;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,12 @@ class FlagLateReturnDebtorsHandlerTest {
   void handle_withOverdueBookingAndNonDebtorBorrower_savesUserAndPublishesEvent() {
     var booking =
         Booking.reconstitute(
-            UUID.randomUUID(), UUID.randomUUID(), borrowerId, overduePeriod, BookingStatus.ACTIVE);
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            borrowerId,
+            overduePeriod,
+            Instant.now(),
+            BookingStatus.ACTIVE);
     when(bookingRepository.findOverdueActive()).thenReturn(List.of(booking));
     when(userRepository.findById(borrowerId))
         .thenReturn(Optional.of(User.reconstitute(borrowerId, false)));
@@ -68,7 +74,12 @@ class FlagLateReturnDebtorsHandlerTest {
   void handle_withOverdueBookingAndAlreadyDebtorBorrower_skips() {
     var booking =
         Booking.reconstitute(
-            UUID.randomUUID(), UUID.randomUUID(), borrowerId, overduePeriod, BookingStatus.ACTIVE);
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            borrowerId,
+            overduePeriod,
+            Instant.now(),
+            BookingStatus.ACTIVE);
     when(bookingRepository.findOverdueActive()).thenReturn(List.of(booking));
     when(userRepository.findById(borrowerId))
         .thenReturn(Optional.of(User.reconstitute(borrowerId, true)));
@@ -85,10 +96,20 @@ class FlagLateReturnDebtorsHandlerTest {
     var debtorId = UUID.randomUUID();
     var booking1 =
         Booking.reconstitute(
-            UUID.randomUUID(), UUID.randomUUID(), nonDebtorId, overduePeriod, BookingStatus.ACTIVE);
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            nonDebtorId,
+            overduePeriod,
+            Instant.now(),
+            BookingStatus.ACTIVE);
     var booking2 =
         Booking.reconstitute(
-            UUID.randomUUID(), UUID.randomUUID(), debtorId, overduePeriod, BookingStatus.ACTIVE);
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            debtorId,
+            overduePeriod,
+            Instant.now(),
+            BookingStatus.ACTIVE);
     when(bookingRepository.findOverdueActive()).thenReturn(List.of(booking1, booking2));
     when(userRepository.findById(nonDebtorId))
         .thenReturn(Optional.of(User.reconstitute(nonDebtorId, false)));

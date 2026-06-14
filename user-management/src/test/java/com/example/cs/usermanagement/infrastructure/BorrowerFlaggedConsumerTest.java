@@ -21,7 +21,7 @@ class BorrowerFlaggedConsumerTest {
     var userId = UUID.randomUUID().toString();
     var event = new BorrowerFlaggedAsDebtor(userId);
 
-    consumer.consume(event);
+    consumer.consume(event, false);
 
     verify(updateDebtorStatusUseCase).handle(new UpdateDebtorStatusCommand(userId));
   }

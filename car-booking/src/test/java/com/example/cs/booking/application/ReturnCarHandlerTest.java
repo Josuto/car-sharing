@@ -12,6 +12,7 @@ import com.example.cs.booking.domain.BookingNotFoundException;
 import com.example.cs.booking.domain.BookingPeriod;
 import com.example.cs.booking.domain.BookingRepository;
 import com.example.cs.booking.domain.BookingStatus;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +31,9 @@ class ReturnCarHandlerTest {
 
   @Test
   void handle_withActiveBooking_savesReturnedBookingAndReturnsIt() {
-    var booking = Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.ACTIVE);
+    var booking =
+        Booking.reconstitute(
+            bookingId, carId, borrowerId, period, Instant.now(), BookingStatus.ACTIVE);
     when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
     var result = handler.handle(new ReturnCarCommand(bookingId));
@@ -49,7 +52,9 @@ class ReturnCarHandlerTest {
 
   @Test
   void handle_withPendingBooking_throws() {
-    var booking = Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.PENDING);
+    var booking =
+        Booking.reconstitute(
+            bookingId, carId, borrowerId, period, Instant.now(), BookingStatus.PENDING);
     when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
     assertThatThrownBy(() -> handler.handle(new ReturnCarCommand(bookingId)))
@@ -59,7 +64,8 @@ class ReturnCarHandlerTest {
   @Test
   void handle_withCancelledBooking_throws() {
     var booking =
-        Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.CANCELLED);
+        Booking.reconstitute(
+            bookingId, carId, borrowerId, period, Instant.now(), BookingStatus.CANCELLED);
     when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
     assertThatThrownBy(() -> handler.handle(new ReturnCarCommand(bookingId)))
@@ -69,7 +75,8 @@ class ReturnCarHandlerTest {
   @Test
   void handle_withAlreadyReturnedBooking_throws() {
     var booking =
-        Booking.reconstitute(bookingId, carId, borrowerId, period, BookingStatus.RETURNED);
+        Booking.reconstitute(
+            bookingId, carId, borrowerId, period, Instant.now(), BookingStatus.RETURNED);
     when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
     assertThatThrownBy(() -> handler.handle(new ReturnCarCommand(bookingId)))

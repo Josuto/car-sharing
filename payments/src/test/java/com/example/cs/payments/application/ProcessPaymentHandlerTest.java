@@ -1,5 +1,6 @@
 package com.example.cs.payments.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,6 +14,7 @@ import com.example.cs.payments.domain.BankingServicePort;
 import com.example.cs.payments.domain.PaymentEventPublisher;
 import com.example.cs.payments.domain.TransactionRepository;
 import com.example.cs.payments.domain.TransactionStatus;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,9 +26,10 @@ class ProcessPaymentHandlerTest {
   private final TransactionRepository transactionRepository = mock(TransactionRepository.class);
   private final BankingServicePort bankingService = mock(BankingServicePort.class);
   private final PaymentEventPublisher publisher = mock(PaymentEventPublisher.class);
+  private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
   private final ProcessPaymentHandler handler =
       new ProcessPaymentHandler(
-          accountRepository, transactionRepository, bankingService, publisher);
+          accountRepository, transactionRepository, bankingService, publisher, meterRegistry);
 
   @Test
   void handle_pspReturnsSuccess_persistsSuccessTransactionAndEmitsPaymentProcessed() {
@@ -60,7 +63,8 @@ class ProcessPaymentHandlerTest {
   }
 
   @Test
-  void handle_pspReturnsFailed_persistsFailedTransactionAndEmitsPaymentProcessed() {
+  void
+      handle_pspReturnsFailed_persistsFailedTransactionEmitsPaymentProcessedAndIncrementsCounter() {
     var bookingId = UUID.randomUUID();
     var borrowerId = UUID.randomUUID();
     var account = Account.create(borrowerId, "ES1234567890");
@@ -88,5 +92,6 @@ class ProcessPaymentHandlerTest {
                     event instanceof PaymentProcessed paymentProcessed
                         && paymentProcessed.bookingId().equals(bookingId.toString())
                         && !paymentProcessed.success()));
+    assertThat(meterRegistry.counter("payments.failed.total").count()).isEqualTo(1.0);
   }
 }

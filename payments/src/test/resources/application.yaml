@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: "jdbc:sqlite::memory:"
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+
+psp:
+  base-url: http://localhost

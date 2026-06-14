@@ -1,0 +1,26 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    url: jdbc:sqlite:./data/payments.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+psp:
+  base-url: https://psp.example.com
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  structured:
+    format:
+      console: logstash
