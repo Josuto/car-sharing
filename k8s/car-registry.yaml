@@ -1,0 +1,75 @@
+# PersistentVolumeClaim for the car-registry SQLite database file.
+# Without this, all car data is lost on pod restart.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: car-registry-pvc
+  namespace: car-sharing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+# Keeps one car-registry pod running and restarts it on failure.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-registry
+  namespace: car-sharing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car-registry
+  template:
+    metadata:
+      labels:
+        app: car-registry
+    spec:
+      containers:
+        - name: car-registry
+          image: car-sharing/car-registry:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: car-sharing-config
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: car-registry
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 60
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: car-registry-pvc
+---
+# Gives car-registry a stable DNS name inside the cluster.
+# Not exposed externally — all traffic routes through the gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-registry
+  namespace: car-sharing
+spec:
+  selector:
+    app: car-registry
+  ports:
+    - port: 8082
+      targetPort: 8082

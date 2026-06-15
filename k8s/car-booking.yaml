@@ -1,0 +1,75 @@
+# PersistentVolumeClaim for the car-booking SQLite database file.
+# Without this, all booking data is lost on pod restart.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: car-booking-pvc
+  namespace: car-sharing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+# Keeps one car-booking pod running and restarts it on failure.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-booking
+  namespace: car-sharing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car-booking
+  template:
+    metadata:
+      labels:
+        app: car-booking
+    spec:
+      containers:
+        - name: car-booking
+          image: car-sharing/car-booking:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8083
+          envFrom:
+            - configMapRef:
+                name: car-sharing-config
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: car-booking
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 60
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: car-booking-pvc
+---
+# Gives car-booking a stable DNS name inside the cluster.
+# Not exposed externally — all traffic routes through the gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-booking
+  namespace: car-sharing
+spec:
+  selector:
+    app: car-booking
+  ports:
+    - port: 8083
+      targetPort: 8083

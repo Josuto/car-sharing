@@ -1,0 +1,69 @@
+# PersistentVolumeClaim for OpenObserve's data directory (streams, indices, WAL).
+# Without this, all ingested telemetry is lost on pod restart.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openobserve-pvc
+  namespace: car-sharing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Keeps one OpenObserve pod running and restarts it on failure.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openobserve
+  namespace: car-sharing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openobserve
+  template:
+    metadata:
+      labels:
+        app: openobserve
+    spec:
+      containers:
+        - name: openobserve
+          image: openobserve/openobserve:latest
+          ports:
+            - containerPort: 5080
+          env:
+            - name: ZO_ROOT_USER_EMAIL
+              value: admin@example.com
+            - name: ZO_ROOT_USER_PASSWORD
+              value: Admin@1234
+            - name: ZO_DATA_DIR
+              value: /data
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            tcpSocket:
+              port: 5080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: openobserve-pvc
+---
+# Gives OpenObserve a stable DNS name ("openobserve") so services can ship
+# telemetry to http://openobserve:5080 and the UI is reachable via NodePort.
+apiVersion: v1
+kind: Service
+metadata:
+  name: openobserve
+  namespace: car-sharing
+spec:
+  type: NodePort
+  selector:
+    app: openobserve
+  ports:
+    - port: 5080
+      targetPort: 5080

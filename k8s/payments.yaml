@@ -1,0 +1,75 @@
+# PersistentVolumeClaim for the payments SQLite database file.
+# Without this, all account and transaction data is lost on pod restart.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: payments-pvc
+  namespace: car-sharing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+# Keeps one payments pod running and restarts it on failure.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments
+  namespace: car-sharing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      labels:
+        app: payments
+    spec:
+      containers:
+        - name: payments
+          image: car-sharing/payments:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8084
+          envFrom:
+            - configMapRef:
+                name: car-sharing-config
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: payments
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 60
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: payments-pvc
+---
+# Gives payments a stable DNS name inside the cluster.
+# Not exposed externally — all traffic routes through the gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments
+  namespace: car-sharing
+spec:
+  selector:
+    app: payments
+  ports:
+    - port: 8084
+      targetPort: 8084

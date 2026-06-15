@@ -1,0 +1,75 @@
+# PersistentVolumeClaim for the user-management SQLite database file.
+# Without this, all user data is lost on pod restart.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: user-management-pvc
+  namespace: car-sharing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+# Keeps one user-management pod running and restarts it on failure.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-management
+  namespace: car-sharing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-management
+  template:
+    metadata:
+      labels:
+        app: user-management
+    spec:
+      containers:
+        - name: user-management
+          image: car-sharing/user-management:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: car-sharing-config
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: user-management
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: user-management-pvc
+---
+# Gives user-management a stable DNS name inside the cluster.
+# Not exposed externally — all traffic routes through the gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-management
+  namespace: car-sharing
+spec:
+  selector:
+    app: user-management
+  ports:
+    - port: 8081
+      targetPort: 8081
