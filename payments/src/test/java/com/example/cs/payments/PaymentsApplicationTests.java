@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 @SpringBootTest
 class PaymentsApplicationTests {
@@ -12,6 +13,7 @@ class PaymentsApplicationTests {
   @TestConfiguration
   static class TestConfig {
     @Bean
+    @Primary
     PaymentEventPublisher noOpPaymentEventPublisher() {
       return event -> {};
     }
