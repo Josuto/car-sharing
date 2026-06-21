@@ -1,0 +1,288 @@
+{
+  "title": "Car Sharing — Operations",
+  "description": "Custom metrics and gauges for the car-sharing platform",
+  "tabs": [
+    {
+      "tabId": "default",
+      "name": "Overview",
+      "panels": [
+        {
+          "id": "panel_cars_available",
+          "type": "stat",
+          "title": "Available Cars",
+          "description": "Number of cars not currently booked",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "cars_available",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 0,
+            "w": 3,
+            "h": 4,
+            "i": 1
+          },
+          "config": {
+            "show_legends": false,
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_bookings_pending",
+          "type": "stat",
+          "title": "Pending Bookings",
+          "description": "Bookings stuck in PENDING state — should trend toward zero",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "bookings_pending_total",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 3,
+            "y": 0,
+            "w": 3,
+            "h": 4,
+            "i": 2
+          },
+          "config": {
+            "show_legends": false,
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_bookings_created",
+          "type": "stat",
+          "title": "Total Bookings Created",
+          "description": "Cumulative number of bookings created since last service restart",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "bookings_created_total",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 6,
+            "y": 0,
+            "w": 3,
+            "h": 4,
+            "i": 3
+          },
+          "config": {
+            "show_legends": false,
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_payments_failed",
+          "type": "stat",
+          "title": "Failed Payments",
+          "description": "Cumulative number of failed PSP transactions since last service restart",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "payments_failed_total",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 9,
+            "y": 0,
+            "w": 3,
+            "h": 4,
+            "i": 4
+          },
+          "config": {
+            "show_legends": false,
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_booking_rate",
+          "type": "line",
+          "title": "Booking Creation Rate",
+          "description": "Rate of new bookings per second (5-minute window)",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "rate(bookings_created_total[5m])",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "{{service_name}}"
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 8,
+            "i": 5
+          },
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_payment_failure_rate",
+          "type": "line",
+          "title": "Payment Failure Rate",
+          "description": "Rate of failed PSP transactions per second (5-minute window)",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "rate(payments_failed_total[5m])",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "{{service_name}}"
+              }
+            }
+          ],
+          "layout": {
+            "x": 6,
+            "y": 4,
+            "w": 6,
+            "h": 8,
+            "i": 6
+          },
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_saga_duration",
+          "type": "line",
+          "title": "Average Booking Saga Duration",
+          "description": "Mean time from PENDING creation to ACTIVE or CANCELLED (5-minute window)",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "rate(bookings_saga_duration_seconds_sum[5m]) / rate(bookings_saga_duration_seconds_count[5m])",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "{{service_name}}"
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 12,
+            "w": 12,
+            "h": 8,
+            "i": 7
+          },
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "unit": "s"
+          }
+        }
+      ]
+    }
+  ]
+}
