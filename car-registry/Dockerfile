@@ -2,10 +2,10 @@ FROM alpine:3 AS agent
 RUN wget -q -O /opentelemetry-javaagent.jar \
     https://repo1.maven.org/maven2/io/opentelemetry/javaagent/opentelemetry-javaagent/2.28.1/opentelemetry-javaagent-2.28.1.jar
 
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM gradle:9.4.1-jdk21-alpine AS builder
 WORKDIR /workspace
 COPY . .
-RUN chmod +x gradlew && ./gradlew :car-registry:bootJar --no-daemon -q
+RUN gradle :car-registry:bootJar --no-daemon -q
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
