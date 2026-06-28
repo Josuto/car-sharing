@@ -36,6 +36,9 @@ public class CreateBookingHandler implements CreateBookingUseCase {
             bookingRepository,
             r -> r.countByStatus(BookingStatus.PENDING))
         .register(meterRegistry);
+    Gauge.builder(
+            "bookings.active.total", bookingRepository, r -> r.countByStatus(BookingStatus.ACTIVE))
+        .register(meterRegistry);
   }
 
   @Override
