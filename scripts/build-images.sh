@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Step 1 of 2 for local k8s deployment. Run this before deploy.sh.
+#
+# Builds a Docker image for each service. Because Colima's k3s uses Docker as
+# its CRI (not containerd), images built with 'docker build' land directly in
+# the Colima VM's Docker daemon and are immediately visible to k3s — no import
+# step is needed. Run deploy.sh afterwards to recreate pods with the new images.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -6,25 +12,14 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_ROOT"
 
-SERVICES=(gateway user-management car-registry car-booking payments)
+SERVICES=(gateway user-management car-registry car-booking payments psp-stub)
 
+# Build each service image using its own Dockerfile.
+# All Dockerfiles use a multi-stage build: gradle builder → JRE runtime image.
 for svc in "${SERVICES[@]}"; do
   echo "==> Building car-sharing/$svc:latest"
   docker build -f "$svc/Dockerfile" -t "car-sharing/$svc:latest" .
 done
 
 echo ""
-echo "All images built successfully."
-
-if colima status 2>/dev/null | grep -q "Running"; then
-  echo "Colima is running — importing images into k3s..."
-  for svc in "${SERVICES[@]}"; do
-    echo "==> Importing car-sharing/$svc:latest"
-    docker save "car-sharing/$svc:latest" | colima ssh -- sudo k3s ctr images import -
-  done
-  echo ""
-  echo "All images imported into k3s."
-else
-  echo "Colima is not running — skipping k3s import. Run the script again once the cluster is up, or import manually with:"
-  echo "  docker save car-sharing/<service>:latest | colima ssh -- sudo k3s ctr images import -"
-fi
+echo "All images built successfully. Run ./scripts/deploy.sh to apply them to the cluster."
