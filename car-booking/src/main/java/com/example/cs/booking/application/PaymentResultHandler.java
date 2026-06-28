@@ -34,8 +34,9 @@ public class PaymentResultHandler implements PaymentResultUseCase {
     }
     bookingRepository.save(booking.get());
 
+    var duration = Duration.between(booking.get().createdAt(), Instant.now());
     meterRegistry
         .timer("bookings.saga.duration")
-        .record(Duration.between(booking.get().createdAt(), Instant.now()));
+        .record(duration.isNegative() ? Duration.ZERO : duration);
   }
 }
