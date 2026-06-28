@@ -40,6 +40,8 @@ spec:
           env:
             - name: OTEL_SERVICE_NAME
               value: payments
+            - name: PSP_BASE_URL
+              value: http://psp-stub:8085
           volumeMounts:
             - name: data
               mountPath: /app/data
