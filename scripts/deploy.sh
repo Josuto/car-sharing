@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# Step 2 of 2 for local k8s deployment. Run after build-images.sh.
+#
+# Tears down the existing namespace (deleting all running pods and state) and
+# recreates everything from the k8s manifests. Pod recreation is what causes k8s
+# to pull images from the containerd store — this is the step that makes newly
+# imported images take effect. imagePullPolicy: Never means k3s never contacts a
+# remote registry; it only looks at the local containerd store populated by
+# build-images.sh.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,6 +41,7 @@ kubectl apply -f "$K8S/gateway.yaml"
 kubectl apply -f "$K8S/user-management.yaml"
 kubectl apply -f "$K8S/car-registry.yaml"
 kubectl apply -f "$K8S/car-booking.yaml"
+kubectl apply -f "$K8S/psp-stub.yaml"
 kubectl apply -f "$K8S/payments.yaml"
 
 echo ""
