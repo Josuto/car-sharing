@@ -4,12 +4,15 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 class RabbitMqConfig {
 
+  static final String BOOKING_EVENTS_EXCHANGE = "booking-events";
   static final String CAR_EVENTS_EXCHANGE = "car-events";
   static final String USER_EVENTS_EXCHANGE = "user-events";
   static final String PAYMENT_EVENTS_EXCHANGE = "payment-events";
@@ -18,6 +21,16 @@ class RabbitMqConfig {
   static final String USER_CREATED_QUEUE = "booking.user-created";
   static final String BORROWER_FLAGGED_AS_DEBTOR_QUEUE = "booking.borrower-flagged-as-debtor";
   static final String PAYMENT_PROCESSED_QUEUE = "booking.payment-processed";
+
+  @Bean
+  MessageConverter jsonMessageConverter() {
+    return new JacksonJsonMessageConverter();
+  }
+
+  @Bean
+  DirectExchange bookingEventsExchange() {
+    return new DirectExchange(BOOKING_EVENTS_EXCHANGE);
+  }
 
   @Bean
   DirectExchange carEventsExchange() {
