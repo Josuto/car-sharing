@@ -60,17 +60,18 @@ class ProcessPaymentHandlerTest {
                     event instanceof PaymentProcessed paymentProcessed
                         && paymentProcessed.bookingId().equals(bookingId.toString())
                         && paymentProcessed.success()));
+    assertThat(meterRegistry.counter("bookings.outcome", "result", "success").count())
+        .isEqualTo(1.0);
   }
 
   @Test
-  void
-      handle_pspReturnsFailed_persistsFailedTransactionEmitsPaymentProcessedAndIncrementsCounter() {
+  void handle_pspReturnsInsufficientFunds_persistsTransactionEmitsFailureAndIncrementsCounter() {
     var bookingId = UUID.randomUUID();
     var borrowerId = UUID.randomUUID();
     var account = Account.create(borrowerId, "ES1234567890");
     when(accountRepository.findByUserId(borrowerId)).thenReturn(Optional.of(account));
     when(bankingService.process(eq("ES1234567890"), argThat(money -> true)))
-        .thenReturn(TransactionStatus.FAILED);
+        .thenReturn(TransactionStatus.INSUFFICIENT_FUNDS);
 
     handler.handle(
         new ProcessPaymentCommand(
@@ -84,7 +85,7 @@ class ProcessPaymentHandlerTest {
             argThat(
                 transaction ->
                     transaction.bookingId().equals(bookingId)
-                        && transaction.status() == TransactionStatus.FAILED));
+                        && transaction.status() == TransactionStatus.INSUFFICIENT_FUNDS));
     verify(publisher)
         .publish(
             argThat(
@@ -92,6 +93,40 @@ class ProcessPaymentHandlerTest {
                     event instanceof PaymentProcessed paymentProcessed
                         && paymentProcessed.bookingId().equals(bookingId.toString())
                         && !paymentProcessed.success()));
-    assertThat(meterRegistry.counter("payments.failed.total").count()).isEqualTo(1.0);
+    assertThat(meterRegistry.counter("bookings.outcome", "result", "insufficient_funds").count())
+        .isEqualTo(1.0);
+  }
+
+  @Test
+  void handle_pspReturnsPspError_persistsTransactionEmitsFailureAndIncrementsCounter() {
+    var bookingId = UUID.randomUUID();
+    var borrowerId = UUID.randomUUID();
+    var account = Account.create(borrowerId, "ES1234567890");
+    when(accountRepository.findByUserId(borrowerId)).thenReturn(Optional.of(account));
+    when(bankingService.process(eq("ES1234567890"), argThat(money -> true)))
+        .thenReturn(TransactionStatus.PSP_ERROR);
+
+    handler.handle(
+        new ProcessPaymentCommand(
+            bookingId.toString(),
+            borrowerId.toString(),
+            LocalDate.of(2026, 6, 1),
+            LocalDate.of(2026, 6, 4)));
+
+    verify(transactionRepository)
+        .save(
+            argThat(
+                transaction ->
+                    transaction.bookingId().equals(bookingId)
+                        && transaction.status() == TransactionStatus.PSP_ERROR));
+    verify(publisher)
+        .publish(
+            argThat(
+                event ->
+                    event instanceof PaymentProcessed paymentProcessed
+                        && paymentProcessed.bookingId().equals(bookingId.toString())
+                        && !paymentProcessed.success()));
+    assertThat(meterRegistry.counter("bookings.outcome", "result", "psp_error").count())
+        .isEqualTo(1.0);
   }
 }

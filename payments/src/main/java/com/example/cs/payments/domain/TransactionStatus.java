@@ -2,5 +2,6 @@ package com.example.cs.payments.domain;
 
 public enum TransactionStatus {
   SUCCESS,
-  FAILED
+  INSUFFICIENT_FUNDS,
+  PSP_ERROR
 }

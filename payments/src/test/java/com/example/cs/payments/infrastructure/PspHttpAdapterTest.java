@@ -5,17 +5,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
 import com.example.cs.payments.domain.Money;
 import com.example.cs.payments.domain.PaymentEventPublisher;
 import com.example.cs.payments.domain.TransactionStatus;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -53,33 +48,20 @@ class PspHttpAdapterTest {
   }
 
   @Test
-  void process_pspReturns409_returnsFailedWithoutWarn() {
+  void process_pspReturns409_returnsInsufficientFunds() {
     psp.stubFor(post(urlEqualTo("/process")).willReturn(aResponse().withStatus(409)));
-    var logs = captureAdapterLogs();
 
     var status = adapter.process("ES1234567890", Money.ofEur(BigDecimal.valueOf(30)));
 
-    assertThat(status).isEqualTo(TransactionStatus.FAILED);
-    assertThat(logs.list).noneMatch(e -> e.getLevel() == Level.WARN);
+    assertThat(status).isEqualTo(TransactionStatus.INSUFFICIENT_FUNDS);
   }
 
   @Test
-  void process_pspReturnsTransientFailure_logsWarnAndReturnsFailed() {
+  void process_pspReturnsTransientFailure_returnsPspError() {
     psp.stubFor(post(urlEqualTo("/process")).willReturn(aResponse().withStatus(500)));
-    var logs = captureAdapterLogs();
 
     var status = adapter.process("ES1234567890", Money.ofEur(BigDecimal.valueOf(30)));
 
-    assertThat(status).isEqualTo(TransactionStatus.FAILED);
-    assertThat(logs.list)
-        .anyMatch(e -> e.getLevel() == Level.WARN && e.getFormattedMessage().contains("500"));
-  }
-
-  private ListAppender<ILoggingEvent> captureAdapterLogs() {
-    var logger = (Logger) LoggerFactory.getLogger(PspHttpAdapter.class);
-    var appender = new ListAppender<ILoggingEvent>();
-    appender.start();
-    logger.addAppender(appender);
-    return appender;
+    assertThat(status).isEqualTo(TransactionStatus.PSP_ERROR);
   }
 }
