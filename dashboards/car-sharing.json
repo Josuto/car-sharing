@@ -36,7 +36,7 @@
           "layout": {
             "x": 0,
             "y": 0,
-            "w": 3,
+            "w": 6,
             "h": 4,
             "i": 1
           },
@@ -73,9 +73,9 @@
             }
           ],
           "layout": {
-            "x": 3,
-            "y": 0,
-            "w": 3,
+            "x": 4,
+            "y": 4,
+            "w": 4,
             "h": 4,
             "i": 2
           },
@@ -112,9 +112,9 @@
             }
           ],
           "layout": {
-            "x": 6,
-            "y": 0,
-            "w": 3,
+            "x": 8,
+            "y": 4,
+            "w": 4,
             "h": 4,
             "i": 3
           },
@@ -131,7 +131,7 @@
           "queryType": "promql",
           "queries": [
             {
-              "query": "payments_failed_total",
+              "query": "sum(bookings_outcome_total{result!=\"success\"})",
               "customQuery": true,
               "fields": {
                 "stream": "",
@@ -151,11 +151,50 @@
             }
           ],
           "layout": {
-            "x": 9,
+            "x": 6,
             "y": 0,
-            "w": 3,
+            "w": 6,
             "h": 4,
             "i": 4
+          },
+          "config": {
+            "show_legends": false,
+            "unit": "short"
+          }
+        },
+        {
+          "id": "panel_bookings_active",
+          "type": "stat",
+          "title": "Active Bookings",
+          "description": "Bookings currently in ACTIVE state",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "bookings_active_total",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "i": 8
           },
           "config": {
             "show_legends": false,
@@ -191,7 +230,7 @@
           ],
           "layout": {
             "x": 0,
-            "y": 4,
+            "y": 8,
             "w": 6,
             "h": 8,
             "i": 5
@@ -210,7 +249,7 @@
           "queryType": "promql",
           "queries": [
             {
-              "query": "rate(payments_failed_total[5m])",
+              "query": "rate(bookings_outcome_total{result!=\"success\"}[5m])",
               "customQuery": true,
               "fields": {
                 "stream": "",
@@ -231,7 +270,7 @@
           ],
           "layout": {
             "x": 6,
-            "y": 4,
+            "y": 8,
             "w": 6,
             "h": 8,
             "i": 6
@@ -271,7 +310,7 @@
           ],
           "layout": {
             "x": 0,
-            "y": 12,
+            "y": 16,
             "w": 12,
             "h": 8,
             "i": 7
@@ -280,6 +319,45 @@
             "show_legends": true,
             "legends_position": "bottom",
             "unit": "s"
+          }
+        },
+        {
+          "id": "panel_booking_outcomes_pie",
+          "type": "pie",
+          "title": "Booking Outcomes",
+          "description": "Share of successful bookings vs failed by reason over the selected time range",
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "increase(bookings_outcome_total[$__interval])",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "{{result}}"
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 24,
+            "w": 6,
+            "h": 8,
+            "i": 9
+          },
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom"
           }
         }
       ]
