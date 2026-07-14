@@ -131,7 +131,7 @@
           "queryType": "promql",
           "queries": [
             {
-              "query": "sum(bookings_outcome_total{result!=\"success\"})",
+              "query": "sum(bookings_outcome{result!=\"success\"})",
               "customQuery": true,
               "fields": {
                 "stream": "",
@@ -249,7 +249,7 @@
           "queryType": "promql",
           "queries": [
             {
-              "query": "rate(bookings_outcome_total{result!=\"success\"}[5m])",
+              "query": "rate(bookings_outcome{result!=\"success\"}[5m])",
               "customQuery": true,
               "fields": {
                 "stream": "",
@@ -329,7 +329,7 @@
           "queryType": "promql",
           "queries": [
             {
-              "query": "increase(bookings_outcome_total[$__interval])",
+              "query": "sum(last_over_time(bookings_outcome{result=\"success\"}[7d]))",
               "customQuery": true,
               "fields": {
                 "stream": "",
@@ -344,7 +344,45 @@
                 }
               },
               "config": {
-                "promql_legend": "{{result}}"
+                "promql_legend": "Successful"
+              }
+            },
+            {
+              "query": "sum(last_over_time(bookings_outcome{result=\"insufficient_funds\"}[7d]))",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "Insufficient Funds"
+              }
+            },
+            {
+              "query": "sum(last_over_time(bookings_outcome{result=\"psp_error\"}[7d]))",
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "filter": {
+                  "type": "group",
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "PSP Error"
               }
             }
           ],
