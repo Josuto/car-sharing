@@ -49,7 +49,7 @@ public class ProcessPaymentHandler implements ProcessPaymentUseCase {
           fee);
     } else if (status == TransactionStatus.PSP_ERROR) {
       meterRegistry.counter("bookings.outcome", "result", "psp_error").increment();
-      log.warn(
+      log.error(
           "payment.failed.psp_error bookingId={} borrowerId={} fee={}", bookingId, borrowerId, fee);
     } else {
       meterRegistry.counter("bookings.outcome", "result", "success").increment();
