@@ -19,17 +19,21 @@ for dashboard_file in "$DASHBOARDS_DIR"/*.json; do
 
   existing_id=$(
     curl -sf -H "Authorization: Basic $AUTH" "$BASE_URL/dashboards" |
-    jq -r --arg t "$title" '.dashboards[] | select(.title == $t) | .dashboard_id // empty'
+    jq -r --arg t "$title" '
+      .dashboards[] |
+      select((.title == $t) or (.v8.title == $t)) |
+      (.dashboard_id // .v8.dashboardId // .dashboardId) // empty
+    '
   )
 
   if [ -n "$existing_id" ]; then
-    echo "    Dashboard exists (id: $existing_id) — updating"
-    jq --arg id "$existing_id" '. + {dashboardId: $id}' "$dashboard_file" |
-      curl -sf -X PUT \
-        -H "Authorization: Basic $AUTH" \
-        -H "Content-Type: application/json" \
-        --data-binary @- \
-        "$BASE_URL/dashboards/$existing_id" | jq -r '.dashboard_id // .v8.dashboardId'
+    echo "    Dashboard exists (id: $existing_id) — deleting and recreating"
+    curl -sf -X DELETE -H "Authorization: Basic $AUTH" "$BASE_URL/dashboards/$existing_id" > /dev/null
+    curl -sf -X POST \
+      -H "Authorization: Basic $AUTH" \
+      -H "Content-Type: application/json" \
+      -d @"$dashboard_file" \
+      "$BASE_URL/dashboards" | jq -r '.dashboard_id // .v8.dashboardId'
   else
     echo "    Dashboard not found — creating"
     curl -sf -X POST \
