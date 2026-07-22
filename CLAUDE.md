@@ -8,6 +8,8 @@ Whenever working with any third-party library or something similar, you MUST loo
 
 Keep your replies extremely concise and focus on conveying the key information. No unnecessary fluff, no long code snippets.
 
+Do not fabricate information, jump to rush conclusions or make wild assumptions. If you are unsure about something, ask me for clarification.
+
 ## Skills
 
 Use the skills specified at the .claude/skills folder located at the root of the project as appropriate. Do not load extra skill resources (e.g., references, rules, examples, etc.) unless required.
