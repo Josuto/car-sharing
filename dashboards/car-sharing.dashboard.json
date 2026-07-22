@@ -471,8 +471,8 @@
         {
           "id": "panel_booking_outcomes_pie",
           "type": "pie",
-          "title": "Latest Booking Outcomes",
-          "description": "Latest counter of booking outcomes over the selected time range",
+          "title": "Total Booking Outcomes",
+          "description": "Total count of booking outcomes since process start, broken down by outcome type",
           "config": {
             "show_legends": true,
             "legends_position": "bottom",
@@ -554,7 +554,7 @@
           "id": "panel_psp_error_rate",
           "type": "metric",
           "title": "PSP Error Rate",
-          "description": "Percentage of bookings that failed due to a PSP error over a given time range",
+          "description": "Percentage of bookings that failed due to a PSP error among all booking attempts over a given time range",
           "config": {
             "show_legends": false,
             "legends_position": null,
@@ -642,23 +642,14 @@
           "queries": [
             {
               "query": "100 * sum(increase(bookings_outcome{result=\"psp_error\"}[$__range])) / clamp_min(sum(increase(bookings_outcome{result=~\"insufficient_funds|psp_error|success\"}[$__range])), 1)",
-              "vrlFunctionQuery": "",
+              "vrlFunctionQuery": null,
               "customQuery": true,
               "fields": {
                 "stream": "",
                 "stream_type": "metrics",
                 "x": [],
-                "y": [
-                  {
-                    "label": "PSP Error %",
-                    "alias": "y_axis_1",
-                    "column": "y_axis_1",
-                    "type": "build",
-                    "color": "#5960b2"
-                  }
-                ],
+                "y": [],
                 "z": [],
-                "breakdown": [],
                 "filter": {
                   "filterType": "group",
                   "logicalOperator": "AND",
@@ -666,16 +657,8 @@
                 }
               },
               "config": {
-                "promql_legend": "",
-                "layer_type": "scatter",
-                "weight_fixed": 1,
-                "limit": 0,
-                "min": 0,
-                "max": 100,
-                "time_shift": [],
-                "query_label": ""
-              },
-              "joins": []
+                "promql_legend": "PSP Error %"
+              }
             }
           ],
           "layout": {
@@ -779,7 +762,7 @@
           "queryType": "sql",
           "queries": [
             {
-              "query": "SELECT\n    histogram(_timestamp, '$__interval') AS minute,\n    COUNT(*) AS failures\nFROM default\nWHERE body LIKE '%payment.failed%'\nGROUP BY minute\nORDER BY minute",
+              "query": "SELECT\n    histogram(_timestamp, '$__range') AS minute,\n    COUNT(*) AS failures\nFROM default\nWHERE body LIKE '%payment.failed%'\nGROUP BY minute\nORDER BY minute",
               "vrlFunctionQuery": "",
               "customQuery": true,
               "fields": {
