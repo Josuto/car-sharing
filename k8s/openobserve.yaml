@@ -40,6 +40,9 @@ spec:
               value: Admin@1234
             - name: ZO_DATA_DIR
               value: /data
+          envFrom:
+            - secretRef:
+                name: openobserve-smtp
           volumeMounts:
             - name: data
               mountPath: /data

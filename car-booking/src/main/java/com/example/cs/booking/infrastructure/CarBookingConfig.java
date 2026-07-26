@@ -56,4 +56,9 @@ class CarBookingConfig {
     return new FlagLateReturnDebtorsHandler(
         bookingRepository, userRepository, bookingEventPublisher);
   }
+
+  @Bean
+  ActiveBookingMetrics activeBookingMetrics(BookingRepository bookingRepository) {
+    return new ActiveBookingMetrics(bookingRepository);
+  }
 }

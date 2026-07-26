@@ -35,4 +35,9 @@ class UserManagementConfig {
   UpdateDebtorStatusUseCase updateDebtorStatusUseCase(UserRepository repository) {
     return new UpdateDebtorStatusHandler(repository);
   }
+
+  @Bean
+  DebtorMetrics debtorMetrics(UserRepository repository) {
+    return new DebtorMetrics(repository);
+  }
 }

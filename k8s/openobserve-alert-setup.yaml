@@ -1,0 +1,92 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: openobserve-alert-setup
+  namespace: car-sharing
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: setup
+          image: curlimages/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              BASE_URL="http://openobserve:5080"
+              CREDS="admin@example.com:Admin@1234"
+
+              until curl -sf -u "$CREDS" "$BASE_URL/api/default/streams" > /dev/null; do
+                echo "Waiting for OpenObserve..."
+                sleep 3
+              done
+
+              create_or_skip() {
+                status=$(curl -s -o /dev/null -w "%{http_code}" "$@")
+                if [ "$status" != "200" ] && [ "$status" != "201" ] && [ "$status" != "400" ] && [ "$status" != "409" ]; then
+                  echo "Request failed with HTTP $status"
+                  exit 1
+                fi
+              }
+
+              create_or_skip -X POST \
+                -u "$CREDS" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "email": "jmartinezbis@yahoo.es",
+                  "first_name": "Alert",
+                  "last_name": "Recipient",
+                  "password": "Alert@1234",
+                  "role": "admin"
+                }' \
+                "$BASE_URL/api/default/users"
+
+              create_or_skip -X POST \
+                -u "$CREDS" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "name": "debtor-alert-email",
+                  "type": "email",
+                  "emails": ["jmartinezbis@yahoo.es"],
+                  "template": "prebuilt_email"
+                }' \
+                "$BASE_URL/api/default/alerts/destinations"
+
+              # Delete any existing alert by this name before (re)creating to avoid duplicates.
+              # OZ v2 alerts API creates a new record each time regardless of name uniqueness.
+              curl -s -o /dev/null -X DELETE -u "$CREDS" \
+                "$BASE_URL/api/v2/default/alerts/high-debtor-ratio" || true
+
+              create_or_skip -X POST \
+                -u "$CREDS" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "name": "high-debtor-ratio",
+                  "description": "Debtors exceed 5% of active bookings",
+                  "enabled": true,
+                  "is_real_time": false,
+                  "stream_name": "users_debtors_current",
+                  "stream_type": "metrics",
+                  "query_condition": {
+                    "type": "promql",
+                    "promql": "(sum(bookings_active_current) > 0) and (sum(users_debtors_current) / sum(bookings_active_current) > 0.05)",
+                    "promql_condition": {
+                      "column": "value",
+                      "operator": ">",
+                      "value": 0.05
+                    }
+                  },
+                  "trigger_condition": {
+                    "frequency": 5,
+                    "period": 5,
+                    "threshold": 1,
+                    "operator": ">=",
+                    "silence": 30
+                  },
+                  "destinations": ["debtor-alert-email"]
+                }' \
+                "$BASE_URL/api/v2/default/alerts"
+
+              echo "Alert setup complete."

@@ -9,4 +9,6 @@ public interface UserRepository {
   Optional<User> findById(UUID id);
 
   Optional<User> findByUsername(String username);
+
+  long countDebtors();
 }

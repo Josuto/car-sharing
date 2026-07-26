@@ -27,4 +27,9 @@ class UserJpaAdapter implements UserRepository {
   public Optional<User> findByUsername(String username) {
     return jpaRepository.findByUsernameAndIsDeletedFalse(username).map(UserJpaEntity::toDomain);
   }
+
+  @Override
+  public long countDebtors() {
+    return jpaRepository.countByIsDebtorTrueAndIsDeletedFalse();
+  }
 }

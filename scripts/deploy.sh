@@ -20,6 +20,12 @@ echo "==> Applying namespace and configmap"
 kubectl apply -f "$K8S/namespace.yaml"
 kubectl apply -f "$K8S/configmap.yaml"
 
+echo "==> Creating OpenObserve SMTP secret from .env"
+kubectl create secret generic openobserve-smtp \
+  --from-env-file="$PROJECT_ROOT/.env" \
+  -n "$NAMESPACE" \
+  --dry-run=client -o yaml | kubectl apply -n "$NAMESPACE" -f -
+
 # --- Infrastructure ---
 echo "==> Applying RabbitMQ and OpenObserve"
 kubectl apply -f "$K8S/rabbitmq.yaml"
@@ -27,6 +33,9 @@ kubectl apply -f "$K8S/openobserve.yaml"
 
 echo "==> Waiting for RabbitMQ to be ready..."
 kubectl wait --for=condition=ready pod -l app=rabbitmq -n "$NAMESPACE" --timeout=120s
+
+echo "==> Waiting for OpenObserve to be ready..."
+kubectl wait --for=condition=ready pod -l app=openobserve -n "$NAMESPACE" --timeout=120s
 
 # --- Services ---
 echo "==> Applying Spring Boot services"
@@ -39,6 +48,9 @@ kubectl apply -f "$K8S/payments.yaml"
 
 echo "==> Restarting all deployments to pick up new images..."
 kubectl get deployment -n "$NAMESPACE" -o name | xargs kubectl rollout restart -n "$NAMESPACE"
+
+echo "==> Applying OpenObserve alert setup Job"
+kubectl apply -f "$K8S/openobserve-alert-setup.yaml"
 
 echo ""
 echo "==> Current pod status:"

@@ -11,7 +11,7 @@ class LateReturnDebtorScheduler {
 
   private final FlagLateReturnDebtorsHandler flagLateReturnDebtorsHandler;
 
-  @Scheduled(cron = "0 0 0 * * *")
+  @Scheduled(cron = "0 0 0 * * *") // Every day at midnight
   void run() {
     flagLateReturnDebtorsHandler.handle();
   }
