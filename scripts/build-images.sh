@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Step 1 of 2 for local k8s deployment. Run this before deploy.sh.
 #
-# Builds a Docker image for each service. Because Colima's k3s uses Docker as
-# its CRI (not containerd), images built with 'docker build' land directly in
+# Builds a Docker image for each service using buildx. Because Colima's k3s
+# uses Docker as its CRI (not containerd), --load makes images land directly in
 # the Colima VM's Docker daemon and are immediately visible to k3s — no import
 # step is needed. Run deploy.sh afterwards to recreate pods with the new images.
 set -euo pipefail
@@ -18,7 +18,7 @@ SERVICES=(gateway user-management car-registry car-booking payments psp-stub)
 # All Dockerfiles use a multi-stage build: gradle builder → JRE runtime image.
 for svc in "${SERVICES[@]}"; do
   echo "==> Building car-sharing/$svc:latest"
-  docker build -f "$svc/Dockerfile" -t "car-sharing/$svc:latest" .
+  docker buildx build --load -f "$svc/Dockerfile" -t "car-sharing/$svc:latest" .
 done
 
 echo ""
