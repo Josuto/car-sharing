@@ -33,11 +33,11 @@
 	 > Finally, be concise and sacrifice grammar for the shake of concision when creating any kind of documentation.
 
 10. Plannification instructions:
-	 > You are an experienced Java/Spring developer that wants to build the application defined at `.claude/specs/SPEC.md`.
+   > You are an experienced Java/Spring developer that wants to build the application defined at `.claude/specs/SPEC.md`.
    > Make a multi-phase plan first. Use the grill-me skill to perform an exhaustive analysis of each phase. For those questions regarding a concrete phase that I cannot currently resolve produce a list of unresolved questions in a "Q&A" section at the end of the phase plan.
-	 > Each phase must correspond to a GitHub issue.
-	 > Present the multi-phase plan before starting its implementation.
-	 > Use the clean-code-principles and clean-ddd-hexagonal skills where necessary.
+   > Each phase must correspond to a GitHub issue.
+   > Present the multi-phase plan before starting its implementation.
+   > Use the clean-code-principles and clean-ddd-hexagonal skills where necessary.
 
 11. Implementation instructions:
 - Resolve any open question related to the phase first with CC:
