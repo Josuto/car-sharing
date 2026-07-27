@@ -11,7 +11,8 @@ class LateReturnDebtorScheduler {
 
   private final FlagLateReturnDebtorsHandler flagLateReturnDebtorsHandler;
 
-  @Scheduled(cron = "0 0 0 * * *") // Every day at midnight
+  @Scheduled(
+      fixedRate = 15 * 60 * 1000) // Every 15 min; in production, use a less frequent schedule
   void run() {
     flagLateReturnDebtorsHandler.handle();
   }

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Owns the full booking lifecycle and is the home of the Saga orchestrator. When a borrower requests a booking, the service saves it as `PENDING` and kicks off an asynchronous payment flow; once the payment result arrives, the booking is confirmed (`ACTIVE`) or cancelled. The service also maintains a CQRS read model for available cars — a local projection synced from the Car Registry via RabbitMQ — so that `GET /cars` never requires a cross-service call. A nightly scheduler detects overdue active bookings and flags the corresponding borrowers as debtors.
+Owns the full booking lifecycle and is the home of the Saga orchestrator. When a borrower requests a booking, the service saves it as `PENDING` and kicks off an asynchronous payment flow; once the payment result arrives, the booking is confirmed (`ACTIVE`) or cancelled. The service also maintains a CQRS read model for available cars — a local projection synced from the Car Registry via RabbitMQ — so that `GET /cars` never requires a cross-service call. A scheduler detects overdue active bookings every 15 minutes and flags the corresponding borrowers as debtors. In a production-ready version this would run far less frequently (e.g. once a day).
 
 ## Input ports
 
@@ -111,7 +111,7 @@ Exchange: `booking-events` (Direct). Routing key = event class simple name.
 | Event | Routing key | Fields | Trigger |
 |---|---|---|---|
 | `BookingPaymentRequested` | `BookingPaymentRequested` | `bookingId`, `borrowerId`, `carId`, `startDate`, `endDate` | After booking saved as `PENDING` (Saga step 1) |
-| `BorrowerFlaggedAsDebtor` | `BorrowerFlaggedAsDebtor` | `userId` | Nightly cron — for each borrower with an overdue `ACTIVE` booking who is not yet a debtor |
+| `BorrowerFlaggedAsDebtor` | `BorrowerFlaggedAsDebtor` | `userId` | Every 15 min — for each borrower with an overdue `ACTIVE` booking who is not yet a debtor |
 
 ### Database writes
 
@@ -156,7 +156,7 @@ Written by `UserCreatedConsumer` (insert, `isDebtor = false`), `UserDebtorConsum
 
 ### Scheduled tasks
 
-`LateReturnDebtorScheduler` runs at **midnight daily** (`cron = "0 0 0 * * *"`). It delegates to `FlagLateReturnDebtorsHandler`, which finds all borrowers with overdue `ACTIVE` bookings, flags them locally, and publishes a `BorrowerFlaggedAsDebtor` event per borrower.
+`LateReturnDebtorScheduler` runs **every 15 minutes** (`fixedRate = 15 min`). It delegates to `FlagLateReturnDebtorsHandler`, which finds all borrowers with overdue `ACTIVE` bookings, flags them locally, and publishes a `BorrowerFlaggedAsDebtor` event per borrower. In a production-ready version this would run far less frequently (e.g. once a day at midnight).
 
 ## Build / run / test
 
