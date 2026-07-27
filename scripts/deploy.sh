@@ -12,13 +12,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-K8S="$PROJECT_ROOT/k8s"
+INFRA="$PROJECT_ROOT/infra"
+SERVICES="$PROJECT_ROOT/services"
 NAMESPACE=car-sharing
 
 # --- Foundation ---
 echo "==> Applying namespace and configmap"
-kubectl apply -f "$K8S/namespace.yaml"
-kubectl apply -f "$K8S/configmap.yaml"
+kubectl apply -f "$INFRA/namespace.yaml"
+kubectl apply -f "$INFRA/configmap.yaml"
 
 echo "==> Creating OpenObserve SMTP secret from .env"
 kubectl create secret generic openobserve-smtp \
@@ -28,8 +29,8 @@ kubectl create secret generic openobserve-smtp \
 
 # --- Infrastructure ---
 echo "==> Applying RabbitMQ and OpenObserve"
-kubectl apply -f "$K8S/rabbitmq.yaml"
-kubectl apply -f "$K8S/openobserve.yaml"
+kubectl apply -f "$INFRA/rabbitmq.yaml"
+kubectl apply -f "$INFRA/openobserve.yaml"
 
 echo "==> Waiting for RabbitMQ to be ready..."
 kubectl wait --for=condition=ready pod -l app=rabbitmq -n "$NAMESPACE" --timeout=120s
@@ -39,18 +40,18 @@ kubectl wait --for=condition=ready pod -l app=openobserve -n "$NAMESPACE" --time
 
 # --- Services ---
 echo "==> Applying Spring Boot services"
-kubectl apply -f "$K8S/gateway.yaml"
-kubectl apply -f "$K8S/user-management.yaml"
-kubectl apply -f "$K8S/car-registry.yaml"
-kubectl apply -f "$K8S/car-booking.yaml"
-kubectl apply -f "$K8S/psp-stub.yaml"
-kubectl apply -f "$K8S/payments.yaml"
+kubectl apply -f "$SERVICES/gateway/infra/gateway.yaml"
+kubectl apply -f "$SERVICES/user-management/infra/user-management.yaml"
+kubectl apply -f "$SERVICES/car-registry/infra/car-registry.yaml"
+kubectl apply -f "$SERVICES/car-booking/infra/car-booking.yaml"
+kubectl apply -f "$SERVICES/psp-stub/infra/psp-stub.yaml"
+kubectl apply -f "$SERVICES/payments/infra/payments.yaml"
 
 echo "==> Restarting all deployments to pick up new images..."
 kubectl get deployment -n "$NAMESPACE" -o name | xargs kubectl rollout restart -n "$NAMESPACE"
 
 echo "==> Applying OpenObserve alert setup Job"
-kubectl apply -f "$K8S/openobserve-alert-setup.yaml"
+kubectl apply -f "$INFRA/openobserve-alert-setup.yaml"
 
 echo ""
 echo "==> Current pod status:"

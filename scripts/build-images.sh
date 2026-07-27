@@ -18,7 +18,7 @@ SERVICES=(gateway user-management car-registry car-booking payments psp-stub)
 # All Dockerfiles use a multi-stage build: gradle builder → JRE runtime image.
 for svc in "${SERVICES[@]}"; do
   echo "==> Building car-sharing/$svc:latest"
-  docker buildx build --load -f "$svc/Dockerfile" -t "car-sharing/$svc:latest" .
+  docker buildx build --load -f "services/$svc/Dockerfile" -t "car-sharing/$svc:latest" .
 done
 
 echo ""

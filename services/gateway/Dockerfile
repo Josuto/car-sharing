@@ -1,0 +1,16 @@
+FROM alpine:3 AS agent
+RUN wget -q -O /opentelemetry-javaagent.jar \
+    https://repo1.maven.org/maven2/io/opentelemetry/javaagent/opentelemetry-javaagent/2.28.1/opentelemetry-javaagent-2.28.1.jar
+
+FROM gradle:9.4.1-jdk21-alpine AS builder
+WORKDIR /workspace
+COPY . .
+RUN gradle :gateway:bootJar --no-daemon -q
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=agent /opentelemetry-javaagent.jar /agents/opentelemetry-javaagent.jar
+COPY --from=builder /workspace/services/gateway/build/libs/*.jar app.jar
+ENV JAVA_TOOL_OPTIONS="-javaagent:/agents/opentelemetry-javaagent.jar"
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

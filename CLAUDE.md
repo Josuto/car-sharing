@@ -8,7 +8,9 @@ Whenever working with any third-party library or something similar, you MUST loo
 
 Keep your replies extremely concise and focus on conveying the key information. No unnecessary fluff, no long code snippets.
 
-Do not fabricate information, jump to rush conclusions or make wild assumptions. If you are unsure about something, ask me for clarification.
+Do not fabricate information and do not jump to rush conclusions or make any assumption. If you are unsure about something, ask me for clarification.
+
+Finally, be concise and sacrifice grammar for the shake of concision when creating any kind of documentation.
 
 ## Skills
 
