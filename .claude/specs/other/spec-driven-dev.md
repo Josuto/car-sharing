@@ -33,25 +33,25 @@
 	 > Finally, be concise and sacrifice grammar for the shake of concision when creating any kind of documentation.
 
 10. Plannification instructions:
-	> You are an experienced Java/Spring developer that wants to build the application defined at `.claude/specs/SPEC.md`.
-  > Make a multi-phase plan first. Use the grill-me skill to perform an exhaustive analysis of each phase. For those questions regarding a concrete phase that I cannot currently resolve produce a list of unresolved questions in a "Q&A" section at the end of the phase plan.
-	> Each phase must correspond to a GitHub issue.
-	> Present the multi-phase plan before starting its implementation.
-	> Use the clean-code-principles and clean-ddd-hexagonal skills where necessary.
+	 > You are an experienced Java/Spring developer that wants to build the application defined at `.claude/specs/SPEC.md`.
+   > Make a multi-phase plan first. Use the grill-me skill to perform an exhaustive analysis of each phase. For those questions regarding a concrete phase that I cannot currently resolve produce a list of unresolved questions in a "Q&A" section at the end of the phase plan.
+	 > Each phase must correspond to a GitHub issue.
+	 > Present the multi-phase plan before starting its implementation.
+	 > Use the clean-code-principles and clean-ddd-hexagonal skills where necessary.
 
 11. Implementation instructions:
 - Resolve any open question related to the phase first with CC:
-	> Grab GH issue #X. First, lets resolve any open questions included in the "Q&A" section of the issue.
-	> Update the "Q&A" section with the answers to those questions.
+	 > Grab GH issue #X. First, lets resolve any open questions included in the "Q&A" section of the issue.
+	 > Update the "Q&A" section with the answers to those questions.
 
 - When ready to start the phase implementation, request CC:
-	> Proceed to the implementation of the GH issue #X using the TDD skill.
-	> Remember to use the DocsExplorer subagent for efficient documentation lookup where necessary.
+	 > Proceed to the implementation of the GH issue #X using the TDD skill.
+	 > Remember to use the DocsExplorer subagent for efficient documentation lookup where necessary.
 
 - Once the phase implementation is completed, request CC:
-	> Create a closing comment for the GH issue #X that briefly explains what was built.
-	> Include the hash of the commit where the changes were made.
-	> Then, close the issue.
+	 > Create a closing comment for the GH issue #X that briefly explains what was built.
+	 > Include the hash of the commit where the changes were made.
+	 > Then, close the issue.
 
 - After each phase tell CC to either `/clear` or `/compact` the main agent's context window.
 
