@@ -1,0 +1,42 @@
+# TODO
+
+- ✅ Add pre-push hook.
+- ✅ Create ADR to justify the usage of RabbitMQ over Kafka (preferred simplicity over completeness and determine whether car registered event sync would be stronger with Kafka due to its event replay capability).
+- Create a README for each service to briefly explain the service. Also include service launching/building/testing instructions.
+- Does it make sense to keep all booking logs and avoid updating e.g., `ACTIVE` -> `RETURNED`?
+- Add integration tests in all bounded contexts (where required)
+- accounts.bank_account => accounts.number (same with domain class field)
+- Validate account number format
+- Create a global exception handler
+- Include OpenSpecification-based service API definition (do the same with async messages if there is any standard)
+- Why `User.flagAsDebtor()` (domain class) at Car Booking creates a new instance of `User`? After all, if a concrete instance of `User` has been declared a debtor, it should be safer for any component using it to know such a fact, right? Look the various methods of `Booking` change the status of `Booking` instances e.g., `Booking.confirm()`
+- ✅ Convert all `application.properties` to `application.yaml`
+- How about also adding `updatedAt` to the car booking domain and adapter DTOs? It may be convenient for auditing purposes
+- ✅ How bout doing o11y via AOP? ~> created an ADR
+- ✅ Why may some events be re-delivered (see e.g., `BrowserFlaggedConsumer.consume(event, redelivered)` ~> because a consumer may receive an event but does not acknowledge it before the connection drops or is reset due to consumer crash, consumer throws an uncaught exception, the channel is already closed, etc.
+- Delete sensitive info from files e.g., `docker-compose.yml`
+- Access RabbitMQ dashboard
+- Add "perform regression testing after every change you make" to `CLAUDE.md`
+- Metrics:
+	- Business:
+		- ✅ Current bookings
+		- Total bookings (made on a given amount of time, counter?)
+		- ✅ Booking creation rate
+		- ✅ Insufficient funds errors
+		- ✅ Other PSP errors
+		- ✅ Percentage of successful bookings (vs other statuses e.g., pending, failing)
+			- Number or (better) pie chart
+		- Percentage of available cars
+		- Number of current debtors + percentage of debtor users
+	- Technical:
+		- Booking saga duration
+		- 500 Error rate
+		- Availability
+		- Pod recreations
+- Alerts:
+	- PSP failures over 5%
+	- Availability below 99%
+- Add documentation:
+	- Troubleshooting in case that `scripts/build-images.sh` fails: Install Docker `buildx` required by `scripts/build-images.sh`
+		- `brew install docker-buildx`
+		- `ln -sf $(brew --prefix)/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx`
