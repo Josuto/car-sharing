@@ -32,12 +32,9 @@ public class CreateBookingHandler implements CreateBookingUseCase {
     this.publisher = publisher;
     this.meterRegistry = meterRegistry;
     Gauge.builder(
-            "bookings.pending.total",
+            "bookings.pending.current",
             bookingRepository,
             r -> r.countByStatus(BookingStatus.PENDING))
-        .register(meterRegistry);
-    Gauge.builder(
-            "bookings.active.total", bookingRepository, r -> r.countByStatus(BookingStatus.ACTIVE))
         .register(meterRegistry);
   }
 

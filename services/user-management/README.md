@@ -112,4 +112,4 @@ Database: `user-management.db`. Table: `users`.
 
 | Metric | Type | Description |
 |---|---|---|
-| `users_debtors_current` | Gauge | Live count of non-deleted users with `isDebtor = true` |
+| `users.debtors.current` | Gauge | Live count of non-deleted users with `isDebtor = true` |

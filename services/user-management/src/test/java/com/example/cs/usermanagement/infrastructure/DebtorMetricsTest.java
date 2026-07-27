@@ -18,6 +18,6 @@ class DebtorMetricsTest {
     when(userRepository.countDebtors()).thenReturn(3L);
     new DebtorMetrics(userRepository).bindTo(registry);
 
-    assertThat(registry.get("users_debtors_current").gauge().value()).isEqualTo(3.0);
+    assertThat(registry.get("users.debtors.current").gauge().value()).isEqualTo(3.0);
   }
 }

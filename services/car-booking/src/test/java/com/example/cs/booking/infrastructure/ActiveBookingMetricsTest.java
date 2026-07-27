@@ -19,6 +19,6 @@ class ActiveBookingMetricsTest {
     when(bookingRepository.countByStatus(BookingStatus.ACTIVE)).thenReturn(7L);
     new ActiveBookingMetrics(bookingRepository).bindTo(registry);
 
-    assertThat(registry.get("bookings_active_current").gauge().value()).isEqualTo(7.0);
+    assertThat(registry.get("bookings.active.current").gauge().value()).isEqualTo(7.0);
   }
 }

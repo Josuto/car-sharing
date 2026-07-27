@@ -15,7 +15,7 @@ class ActiveBookingMetrics implements MeterBinder {
   @Override
   public void bindTo(MeterRegistry registry) {
     Gauge.builder(
-            "bookings_active_current",
+            "bookings.active.current",
             bookingRepository,
             r -> r.countByStatus(BookingStatus.ACTIVE))
         .register(registry);

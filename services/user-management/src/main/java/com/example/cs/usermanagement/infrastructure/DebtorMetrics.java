@@ -13,7 +13,7 @@ class DebtorMetrics implements MeterBinder {
 
   @Override
   public void bindTo(MeterRegistry registry) {
-    Gauge.builder("users_debtors_current", userRepository, r -> r.countDebtors())
+    Gauge.builder("users.debtors.current", userRepository, r -> r.countDebtors())
         .register(registry);
   }
 }

@@ -170,9 +170,8 @@ Written by `UserCreatedConsumer` (insert, `isDebtor = false`), `UserDebtorConsum
 
 | Metric | Type | Description |
 |---|---|---|
-| `bookings_active_current` | Gauge | Live count of bookings in `ACTIVE` status |
-| `bookings.active.total` | Gauge | Live count of bookings in `ACTIVE` status (alternate registration) |
-| `bookings.pending.total` | Gauge | Live count of bookings in `PENDING` status |
+| `bookings.active.current` | Gauge | Live count of bookings in `ACTIVE` status |
+| `bookings.pending.current` | Gauge | Live count of bookings in `PENDING` status |
 | `bookings.created.total` | Counter | Incremented once per successful booking creation |
 | `cars.available` | Gauge | Count of cars currently available for booking |
 | `bookings.saga.duration` | Timer | Duration from booking creation to `PaymentProcessed` receipt |

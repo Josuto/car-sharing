@@ -61,7 +61,7 @@ class CreateBookingHandlerTest {
     verify(bookingRepository).save(argThat(saved -> saved.status() == BookingStatus.PENDING));
     verify(publisher).publish(any(BookingPaymentRequested.class));
     assertThat(meterRegistry.counter("bookings.created.total").count()).isEqualTo(1.0);
-    assertThat(meterRegistry.get("bookings.pending.total").gauge().value()).isEqualTo(1.0);
+    assertThat(meterRegistry.get("bookings.pending.current").gauge().value()).isEqualTo(1.0);
   }
 
   @Test

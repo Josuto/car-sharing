@@ -255,11 +255,11 @@
           "queryType": "sql",
           "queries": [
             {
-              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_active_total\" ",
+              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_active_current\" ",
               "vrlFunctionQuery": "",
               "customQuery": false,
               "fields": {
-                "stream": "bookings_active_total",
+                "stream": "bookings_active_current",
                 "stream_type": "metrics",
                 "x": [],
                 "y": [
@@ -407,11 +407,11 @@
           "queryType": "sql",
           "queries": [
             {
-              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_pending_total\" ",
+              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_pending_current\" ",
               "vrlFunctionQuery": "",
               "customQuery": false,
               "fields": {
-                "stream": "bookings_pending_total",
+                "stream": "bookings_pending_current",
                 "stream_type": "metrics",
                 "x": [],
                 "y": [

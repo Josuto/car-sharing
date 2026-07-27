@@ -129,7 +129,7 @@ Each service emits three signals, all ingested by [OpenObserve](https://openobse
 
 - **Traces** — zero-code OTel Java agent (OTLP/gRPC). Spans cover inbound HTTP requests, RabbitMQ consumer handlers, and Saga steps.
 - **Logs** — structured JSON via SLF4J/Logback. `INFO` for state transitions; `WARN` for RabbitMQ redeliveries (see [ADR-001](doc/decisions/ADR-001-rabbitmq-redelivery-logging.md)); `ERROR` for unhandled failures.
-- **Metrics** — Micrometer gauges exported via OTLP. Custom metrics defined per service (see each service's `README.md`); platform-level metrics include `bookings_active_current` (Car Booking) and `users_debtors_current` (User Management).
+- **Metrics** — Micrometer gauges exported via OTLP. Custom metrics defined per service (see each service's `README.md`); platform-level metrics include `bookings.active.current` (Car Booking) and `users.debtors.current` (User Management).
 
 OpenObserve is deployed automatically by `scripts/deploy.sh`. Once the cluster is up, import the pre-built dashboard:
 
