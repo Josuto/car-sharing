@@ -1,343 +1,497 @@
 {
-  "title": "Car Sharing — Operations",
+  "version": 8,
+  "dashboardId": "7479179155939000320",
+  "title": "Car Sharing",
   "description": "Custom metrics and gauges for the car-sharing platform",
+  "role": "",
+  "owner": "",
+  "created": "2026-06-30T23:25:21.457Z",
   "tabs": [
     {
       "tabId": "default",
-      "name": "Overview",
+      "name": "Default",
       "panels": [
         {
-          "id": "panel_cars_available",
-          "type": "stat",
-          "title": "Available Cars",
-          "description": "Number of cars not currently booked",
-          "queryType": "promql",
+          "id": "Panel_ID8472810",
+          "type": "metric",
+          "title": "Currently Available Cars",
+          "description": "",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "decimals": 2,
+            "line_thickness": 1.5,
+            "step_value": "0",
+            "top_results_others": false,
+            "axis_border_show": false,
+            "label_option": {
+              "rotate": 0
+            },
+            "axis_label_rotate": 0,
+            "show_symbol": false,
+            "line_interpolation": "smooth",
+            "legend_width": {
+              "unit": "px"
+            },
+            "legend_height": {
+              "unit": "px"
+            },
+            "base_map": {
+              "type": "osm"
+            },
+            "map_type": {
+              "type": "world"
+            },
+            "map_view": {
+              "zoom": 1,
+              "lat": 0,
+              "lng": 0
+            },
+            "map_symbol_style": {
+              "size": "by Value",
+              "size_by_value": {
+                "min": 1,
+                "max": 100
+              },
+              "size_fixed": 2
+            },
+            "drilldown": [],
+            "mark_line": [],
+            "override_config": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false,
+            "table_transpose": false,
+            "table_dynamic_columns": false,
+            "mappings": [],
+            "color": {
+              "mode": "palette-classic-by-series",
+              "fixedColor": [
+                "#53ca53"
+              ],
+              "seriesBy": "last",
+              "colorBySeries": []
+            },
+            "trellis": {
+              "layout": null,
+              "num_of_columns": 1,
+              "group_by_y_axis": false
+            },
+            "show_gridlines": true,
+            "aggregation": "last",
+            "lat_label": "latitude",
+            "lon_label": "longitude",
+            "weight_label": "weight",
+            "name_label": "name",
+            "table_aggregations": [
+              "last"
+            ],
+            "promql_table_mode": "single",
+            "visible_columns": [],
+            "hidden_columns": [],
+            "sticky_columns": [],
+            "sticky_first_column": false,
+            "column_order": [],
+            "table_pagination": false,
+            "table_pivot_show_row_totals": false,
+            "table_pivot_show_col_totals": false,
+            "table_pivot_sticky_row_totals": false,
+            "table_pivot_sticky_col_totals": false,
+            "panel_time_enabled": false
+          },
+          "queryType": "sql",
           "queries": [
             {
-              "query": "cars_available",
-              "customQuery": true,
+              "query": "SELECT value as \"y_axis_1\" FROM \"cars_available\" ",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
               "fields": {
-                "stream": "",
+                "stream": "cars_available",
                 "stream_type": "metrics",
                 "x": [],
-                "y": [],
+                "y": [
+                  {
+                    "label": "_timestamp",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "type": "build",
+                    "color": "#5960b2",
+                    "args": [
+                      {
+                        "type": "field",
+                        "value": {
+                          "field": "value",
+                          "streamAlias": null
+                        }
+                      }
+                    ],
+                    "isDerived": false,
+                    "havingConditions": [],
+                    "treatAsNonTimestamp": false,
+                    "showFieldAsJson": false,
+                    "rawQuery": ""
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
                 }
               },
               "config": {
-                "promql_legend": ""
-              }
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100,
+                "time_shift": [],
+                "query_label": ""
+              },
+              "joins": []
             }
           ],
           "layout": {
             "x": 0,
             "y": 0,
-            "w": 6,
-            "h": 4,
+            "w": 32,
+            "h": 18,
             "i": 1
           },
-          "config": {
-            "show_legends": false,
-            "unit": "short"
-          }
+          "htmlContent": "",
+          "markdownContent": "",
+          "customChartContent": " // To know more about ECharts , \n// visit: https://echarts.apache.org/examples/en/index.html \n// Example: https://echarts.apache.org/examples/en/editor.html?c=line-simple \n// Define your ECharts 'option' here. \n// 'data' variable is available for use and contains the response data from the search result and it is an array.\noption = {  \n \n};\n  "
         },
         {
-          "id": "panel_bookings_pending",
-          "type": "stat",
-          "title": "Pending Bookings",
-          "description": "Bookings stuck in PENDING state — should trend toward zero",
-          "queryType": "promql",
+          "id": "Panel_ID8532710",
+          "type": "metric",
+          "title": "Current Active Bookings",
+          "description": "",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "decimals": 2,
+            "line_thickness": 1.5,
+            "step_value": "0",
+            "top_results_others": false,
+            "axis_border_show": false,
+            "label_option": {
+              "rotate": 0
+            },
+            "axis_label_rotate": 0,
+            "show_symbol": false,
+            "line_interpolation": "smooth",
+            "legend_width": {
+              "unit": "px"
+            },
+            "legend_height": {
+              "unit": "px"
+            },
+            "base_map": {
+              "type": "osm"
+            },
+            "map_type": {
+              "type": "world"
+            },
+            "map_view": {
+              "zoom": 1,
+              "lat": 0,
+              "lng": 0
+            },
+            "map_symbol_style": {
+              "size": "by Value",
+              "size_by_value": {
+                "min": 1,
+                "max": 100
+              },
+              "size_fixed": 2
+            },
+            "drilldown": [],
+            "mark_line": [],
+            "override_config": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false,
+            "table_transpose": false,
+            "table_dynamic_columns": false,
+            "mappings": [],
+            "color": {
+              "mode": "palette-classic-by-series",
+              "fixedColor": [
+                "#53ca53"
+              ],
+              "seriesBy": "last",
+              "colorBySeries": []
+            },
+            "trellis": {
+              "layout": null,
+              "num_of_columns": 1,
+              "group_by_y_axis": false
+            },
+            "show_gridlines": true,
+            "aggregation": "last",
+            "lat_label": "latitude",
+            "lon_label": "longitude",
+            "weight_label": "weight",
+            "name_label": "name",
+            "table_aggregations": [
+              "last"
+            ],
+            "promql_table_mode": "single",
+            "visible_columns": [],
+            "hidden_columns": [],
+            "sticky_columns": [],
+            "sticky_first_column": false,
+            "column_order": [],
+            "table_pagination": false,
+            "table_pivot_show_row_totals": false,
+            "table_pivot_show_col_totals": false,
+            "table_pivot_sticky_row_totals": false,
+            "table_pivot_sticky_col_totals": false,
+            "panel_time_enabled": false
+          },
+          "queryType": "sql",
           "queries": [
             {
-              "query": "bookings_pending_total",
-              "customQuery": true,
+              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_active_total\" ",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
               "fields": {
-                "stream": "",
+                "stream": "bookings_active_total",
                 "stream_type": "metrics",
                 "x": [],
-                "y": [],
+                "y": [
+                  {
+                    "label": "_timestamp",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "type": "build",
+                    "color": "#5960b2",
+                    "args": [
+                      {
+                        "type": "field",
+                        "value": {
+                          "field": "value",
+                          "streamAlias": null
+                        }
+                      }
+                    ],
+                    "isDerived": false,
+                    "havingConditions": [],
+                    "treatAsNonTimestamp": false,
+                    "showFieldAsJson": false
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
                 }
               },
               "config": {
-                "promql_legend": ""
-              }
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100,
+                "time_shift": [],
+                "query_label": ""
+              },
+              "joins": []
             }
           ],
           "layout": {
-            "x": 4,
-            "y": 4,
-            "w": 4,
-            "h": 4,
+            "x": 32,
+            "y": 0,
+            "w": 32,
+            "h": 18,
             "i": 2
           },
-          "config": {
-            "show_legends": false,
-            "unit": "short"
-          }
+          "htmlContent": "",
+          "markdownContent": "",
+          "customChartContent": " // To know more about ECharts , \n// visit: https://echarts.apache.org/examples/en/index.html \n// Example: https://echarts.apache.org/examples/en/editor.html?c=line-simple \n// Define your ECharts 'option' here. \n// 'data' variable is available for use and contains the response data from the search result and it is an array.\noption = {  \n \n};\n  "
         },
         {
-          "id": "panel_bookings_created",
-          "type": "stat",
-          "title": "Total Bookings Created",
-          "description": "Cumulative number of bookings created since last service restart",
-          "queryType": "promql",
+          "id": "Panel_ID7686010",
+          "type": "metric",
+          "title": "Current Pending Bookings",
+          "description": "",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "decimals": 2,
+            "line_thickness": 1.5,
+            "step_value": "0",
+            "top_results_others": false,
+            "axis_border_show": false,
+            "label_option": {
+              "rotate": 0
+            },
+            "axis_label_rotate": 0,
+            "show_symbol": false,
+            "line_interpolation": "smooth",
+            "legend_width": {
+              "unit": "px"
+            },
+            "legend_height": {
+              "unit": "px"
+            },
+            "base_map": {
+              "type": "osm"
+            },
+            "map_type": {
+              "type": "world"
+            },
+            "map_view": {
+              "zoom": 1,
+              "lat": 0,
+              "lng": 0
+            },
+            "map_symbol_style": {
+              "size": "by Value",
+              "size_by_value": {
+                "min": 1,
+                "max": 100
+              },
+              "size_fixed": 2
+            },
+            "drilldown": [],
+            "mark_line": [],
+            "override_config": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false,
+            "table_transpose": false,
+            "table_dynamic_columns": false,
+            "mappings": [],
+            "color": {
+              "mode": "palette-classic-by-series",
+              "fixedColor": [
+                "#53ca53"
+              ],
+              "seriesBy": "last",
+              "colorBySeries": []
+            },
+            "trellis": {
+              "layout": null,
+              "num_of_columns": 1,
+              "group_by_y_axis": false
+            },
+            "show_gridlines": true,
+            "aggregation": "last",
+            "lat_label": "latitude",
+            "lon_label": "longitude",
+            "weight_label": "weight",
+            "name_label": "name",
+            "table_aggregations": [
+              "last"
+            ],
+            "promql_table_mode": "single",
+            "visible_columns": [],
+            "hidden_columns": [],
+            "sticky_columns": [],
+            "sticky_first_column": false,
+            "column_order": [],
+            "table_pagination": false,
+            "table_pivot_show_row_totals": false,
+            "table_pivot_show_col_totals": false,
+            "table_pivot_sticky_row_totals": false,
+            "table_pivot_sticky_col_totals": false,
+            "panel_time_enabled": false
+          },
+          "queryType": "sql",
           "queries": [
             {
-              "query": "bookings_created_total",
-              "customQuery": true,
+              "query": "SELECT value as \"y_axis_1\" FROM \"bookings_pending_total\" ",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
               "fields": {
-                "stream": "",
+                "stream": "bookings_pending_total",
                 "stream_type": "metrics",
                 "x": [],
-                "y": [],
+                "y": [
+                  {
+                    "label": "_timestamp",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "type": "build",
+                    "color": "#5960b2",
+                    "args": [
+                      {
+                        "type": "field",
+                        "value": {
+                          "field": "value",
+                          "streamAlias": null
+                        }
+                      }
+                    ],
+                    "isDerived": false,
+                    "havingConditions": [],
+                    "treatAsNonTimestamp": false,
+                    "showFieldAsJson": false
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
                 }
               },
               "config": {
-                "promql_legend": ""
-              }
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100,
+                "time_shift": [],
+                "query_label": ""
+              },
+              "joins": []
             }
           ],
           "layout": {
-            "x": 8,
-            "y": 4,
-            "w": 4,
-            "h": 4,
+            "x": 64,
+            "y": 0,
+            "w": 32,
+            "h": 18,
             "i": 3
           },
-          "config": {
-            "show_legends": false,
-            "unit": "short"
-          }
-        },
-        {
-          "id": "panel_payments_failed",
-          "type": "stat",
-          "title": "Failed Payments",
-          "description": "Cumulative number of failed PSP transactions since last service restart",
-          "queryType": "promql",
-          "queries": [
-            {
-              "query": "sum(bookings_outcome{result!=\"success\"})",
-              "customQuery": true,
-              "fields": {
-                "stream": "",
-                "stream_type": "metrics",
-                "x": [],
-                "y": [],
-                "filter": {
-                  "type": "group",
-                  "filterType": "group",
-                  "logicalOperator": "AND",
-                  "conditions": []
-                }
-              },
-              "config": {
-                "promql_legend": ""
-              }
-            }
-          ],
-          "layout": {
-            "x": 6,
-            "y": 0,
-            "w": 6,
-            "h": 4,
-            "i": 4
-          },
-          "config": {
-            "show_legends": false,
-            "unit": "short"
-          }
-        },
-        {
-          "id": "panel_bookings_active",
-          "type": "stat",
-          "title": "Active Bookings",
-          "description": "Bookings currently in ACTIVE state",
-          "queryType": "promql",
-          "queries": [
-            {
-              "query": "bookings_active_total",
-              "customQuery": true,
-              "fields": {
-                "stream": "",
-                "stream_type": "metrics",
-                "x": [],
-                "y": [],
-                "filter": {
-                  "type": "group",
-                  "filterType": "group",
-                  "logicalOperator": "AND",
-                  "conditions": []
-                }
-              },
-              "config": {
-                "promql_legend": ""
-              }
-            }
-          ],
-          "layout": {
-            "x": 0,
-            "y": 4,
-            "w": 4,
-            "h": 4,
-            "i": 8
-          },
-          "config": {
-            "show_legends": false,
-            "unit": "short"
-          }
-        },
-        {
-          "id": "panel_booking_rate",
-          "type": "line",
-          "title": "Booking Creation Rate",
-          "description": "Rate of new bookings per second (5-minute window)",
-          "queryType": "promql",
-          "queries": [
-            {
-              "query": "rate(bookings_created_total[5m])",
-              "customQuery": true,
-              "fields": {
-                "stream": "",
-                "stream_type": "metrics",
-                "x": [],
-                "y": [],
-                "filter": {
-                  "type": "group",
-                  "filterType": "group",
-                  "logicalOperator": "AND",
-                  "conditions": []
-                }
-              },
-              "config": {
-                "promql_legend": "{{service_name}}"
-              }
-            }
-          ],
-          "layout": {
-            "x": 0,
-            "y": 8,
-            "w": 6,
-            "h": 8,
-            "i": 5
-          },
-          "config": {
-            "show_legends": true,
-            "legends_position": "bottom",
-            "unit": "short"
-          }
-        },
-        {
-          "id": "panel_payment_failure_rate",
-          "type": "line",
-          "title": "Payment Failure Rate",
-          "description": "Rate of failed PSP transactions per second (5-minute window)",
-          "queryType": "promql",
-          "queries": [
-            {
-              "query": "rate(bookings_outcome{result!=\"success\"}[5m])",
-              "customQuery": true,
-              "fields": {
-                "stream": "",
-                "stream_type": "metrics",
-                "x": [],
-                "y": [],
-                "filter": {
-                  "type": "group",
-                  "filterType": "group",
-                  "logicalOperator": "AND",
-                  "conditions": []
-                }
-              },
-              "config": {
-                "promql_legend": "{{service_name}}"
-              }
-            }
-          ],
-          "layout": {
-            "x": 6,
-            "y": 8,
-            "w": 6,
-            "h": 8,
-            "i": 6
-          },
-          "config": {
-            "show_legends": true,
-            "legends_position": "bottom",
-            "unit": "short"
-          }
-        },
-        {
-          "id": "panel_saga_duration",
-          "type": "line",
-          "title": "Average Booking Saga Duration",
-          "description": "Mean time from PENDING creation to ACTIVE or CANCELLED (5-minute window)",
-          "queryType": "promql",
-          "queries": [
-            {
-              "query": "rate(bookings_saga_duration_seconds_sum[5m]) / rate(bookings_saga_duration_seconds_count[5m])",
-              "customQuery": true,
-              "fields": {
-                "stream": "",
-                "stream_type": "metrics",
-                "x": [],
-                "y": [],
-                "filter": {
-                  "type": "group",
-                  "filterType": "group",
-                  "logicalOperator": "AND",
-                  "conditions": []
-                }
-              },
-              "config": {
-                "promql_legend": "{{service_name}}"
-              }
-            }
-          ],
-          "layout": {
-            "x": 0,
-            "y": 16,
-            "w": 12,
-            "h": 8,
-            "i": 7
-          },
-          "config": {
-            "show_legends": true,
-            "legends_position": "bottom",
-            "unit": "s"
-          }
+          "htmlContent": "",
+          "markdownContent": "",
+          "customChartContent": " // To know more about ECharts , \n// visit: https://echarts.apache.org/examples/en/index.html \n// Example: https://echarts.apache.org/examples/en/editor.html?c=line-simple \n// Define your ECharts 'option' here. \n// 'data' variable is available for use and contains the response data from the search result and it is an array.\noption = {  \n \n};\n  "
         },
         {
           "id": "panel_booking_outcomes_pie",
           "type": "pie",
-          "title": "Booking Outcomes",
-          "description": "Share of successful bookings vs failed by reason over the selected time range",
+          "title": "Total Booking Outcomes",
+          "description": "Total count of booking outcomes since process start, broken down by outcome type",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "base_map": null,
+            "map_view": null
+          },
           "queryType": "promql",
           "queries": [
             {
-              "query": "sum(last_over_time(bookings_outcome{result=\"success\"}[7d]))",
+              "query": "sum(last_over_time(bookings_outcome{result=\"success\"}[$__range]))",
+              "vrlFunctionQuery": null,
               "customQuery": true,
               "fields": {
                 "stream": "",
                 "stream_type": "metrics",
                 "x": [],
                 "y": [],
+                "z": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
@@ -348,15 +502,16 @@
               }
             },
             {
-              "query": "sum(last_over_time(bookings_outcome{result=\"insufficient_funds\"}[7d]))",
+              "query": "sum(last_over_time(bookings_outcome{result=\"insufficient_funds\"}[$__range]))",
+              "vrlFunctionQuery": null,
               "customQuery": true,
               "fields": {
                 "stream": "",
                 "stream_type": "metrics",
                 "x": [],
                 "y": [],
+                "z": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
@@ -367,15 +522,16 @@
               }
             },
             {
-              "query": "sum(last_over_time(bookings_outcome{result=\"psp_error\"}[7d]))",
+              "query": "sum(last_over_time(bookings_outcome{result=\"psp_error\"}[$__range]))",
+              "vrlFunctionQuery": null,
               "customQuery": true,
               "fields": {
                 "stream": "",
                 "stream_type": "metrics",
                 "x": [],
                 "y": [],
+                "z": [],
                 "filter": {
-                  "type": "group",
                   "filterType": "group",
                   "logicalOperator": "AND",
                   "conditions": []
@@ -387,18 +543,317 @@
             }
           ],
           "layout": {
-            "x": 0,
-            "y": 24,
-            "w": 6,
-            "h": 8,
-            "i": 9
+            "x": 32,
+            "y": 18,
+            "w": 64,
+            "h": 18,
+            "i": 4
+          }
+        },
+        {
+          "id": "panel_psp_error_rate",
+          "type": "metric",
+          "title": "PSP Error Rate",
+          "description": "Percentage of bookings that failed due to a PSP error among all booking attempts over a given time range",
+          "config": {
+            "show_legends": false,
+            "legends_position": null,
+            "decimals": 1,
+            "line_thickness": 1.5,
+            "step_value": "0",
+            "top_results_others": false,
+            "axis_border_show": false,
+            "label_option": {
+              "rotate": 0
+            },
+            "axis_label_rotate": 0,
+            "show_symbol": false,
+            "line_interpolation": "smooth",
+            "legend_width": {
+              "unit": "px"
+            },
+            "legend_height": {
+              "unit": "px"
+            },
+            "base_map": {
+              "type": "osm"
+            },
+            "map_type": {
+              "type": "world"
+            },
+            "map_view": {
+              "zoom": 1,
+              "lat": 0,
+              "lng": 0
+            },
+            "map_symbol_style": {
+              "size": "by Value",
+              "size_by_value": {
+                "min": 1,
+                "max": 100
+              },
+              "size_fixed": 2
+            },
+            "drilldown": [],
+            "mark_line": [],
+            "override_config": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false,
+            "table_transpose": false,
+            "table_dynamic_columns": false,
+            "mappings": [],
+            "color": {
+              "mode": "palette-classic-by-series",
+              "fixedColor": [
+                "#53ca53"
+              ],
+              "seriesBy": "last",
+              "colorBySeries": []
+            },
+            "trellis": {
+              "layout": null,
+              "num_of_columns": 1,
+              "group_by_y_axis": false
+            },
+            "show_gridlines": true,
+            "aggregation": "last",
+            "lat_label": "latitude",
+            "lon_label": "longitude",
+            "weight_label": "weight",
+            "name_label": "name",
+            "table_aggregations": [
+              "last"
+            ],
+            "promql_table_mode": "single",
+            "visible_columns": [],
+            "hidden_columns": [],
+            "sticky_columns": [],
+            "sticky_first_column": false,
+            "column_order": [],
+            "table_pagination": false,
+            "table_pivot_show_row_totals": false,
+            "table_pivot_show_col_totals": false,
+            "table_pivot_sticky_row_totals": false,
+            "table_pivot_sticky_col_totals": false,
+            "panel_time_enabled": false
           },
+          "queryType": "promql",
+          "queries": [
+            {
+              "query": "100 * sum(increase(bookings_outcome{result=\"psp_error\"}[$__range])) / clamp_min(sum(increase(bookings_outcome{result=~\"insufficient_funds|psp_error|success\"}[$__range])), 1)",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "",
+                "stream_type": "metrics",
+                "x": [],
+                "y": [],
+                "z": [],
+                "filter": {
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "PSP Error %"
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 18,
+            "w": 32,
+            "h": 18,
+            "i": 5
+          },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "Panel_ID7478010",
+          "type": "bar",
+          "title": "Payment Failures",
+          "description": "",
           "config": {
             "show_legends": true,
-            "legends_position": "bottom"
-          }
+            "legends_position": null,
+            "decimals": 2,
+            "line_thickness": 1.5,
+            "step_value": "0",
+            "top_results_others": false,
+            "axis_border_show": false,
+            "label_option": {
+              "rotate": 0
+            },
+            "axis_label_rotate": 0,
+            "show_symbol": false,
+            "line_interpolation": "smooth",
+            "legend_width": {
+              "unit": "px"
+            },
+            "legend_height": {
+              "unit": "px"
+            },
+            "base_map": {
+              "type": "osm"
+            },
+            "map_type": {
+              "type": "world"
+            },
+            "map_view": {
+              "zoom": 1,
+              "lat": 0,
+              "lng": 0
+            },
+            "map_symbol_style": {
+              "size": "by Value",
+              "size_by_value": {
+                "min": 1,
+                "max": 100
+              },
+              "size_fixed": 2
+            },
+            "drilldown": [],
+            "mark_line": [],
+            "override_config": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false,
+            "table_transpose": false,
+            "table_dynamic_columns": false,
+            "mappings": [],
+            "color": {
+              "mode": "palette-classic-by-series",
+              "fixedColor": [
+                "#53ca53"
+              ],
+              "seriesBy": "last",
+              "colorBySeries": []
+            },
+            "trellis": {
+              "layout": null,
+              "num_of_columns": 1,
+              "group_by_y_axis": false
+            },
+            "show_gridlines": true,
+            "aggregation": "last",
+            "lat_label": "latitude",
+            "lon_label": "longitude",
+            "weight_label": "weight",
+            "name_label": "name",
+            "table_aggregations": [
+              "last"
+            ],
+            "promql_table_mode": "single",
+            "visible_columns": [],
+            "hidden_columns": [],
+            "sticky_columns": [],
+            "sticky_first_column": false,
+            "column_order": [],
+            "table_pagination": false,
+            "table_pivot_show_row_totals": false,
+            "table_pivot_show_col_totals": false,
+            "table_pivot_sticky_row_totals": false,
+            "table_pivot_sticky_col_totals": false,
+            "panel_time_enabled": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT\n    histogram(_timestamp, '$__range') AS minute,\n    COUNT(*) AS failures\nFROM default\nWHERE body LIKE '%payment.failed%'\nGROUP BY minute\nORDER BY minute",
+              "vrlFunctionQuery": "",
+              "customQuery": true,
+              "fields": {
+                "stream": "default",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "minute",
+                    "type": "build",
+                    "color": null,
+                    "args": [
+                      {
+                        "type": "field",
+                        "value": {
+                          "field": "minute",
+                          "streamAlias": null
+                        }
+                      }
+                    ],
+                    "isDerived": false,
+                    "havingConditions": [],
+                    "treatAsNonTimestamp": false,
+                    "showFieldAsJson": false
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Failures",
+                    "alias": "failures",
+                    "type": "build",
+                    "color": "#5960b2",
+                    "functionName": "count",
+                    "args": [
+                      {
+                        "type": "field",
+                        "value": {
+                          "field": "failures",
+                          "streamAlias": null
+                        }
+                      }
+                    ],
+                    "isDerived": false,
+                    "havingConditions": [],
+                    "treatAsNonTimestamp": true,
+                    "showFieldAsJson": false
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": {
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100,
+                "time_shift": [],
+                "query_label": ""
+              },
+              "joins": []
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 36,
+            "w": 96,
+            "h": 18,
+            "i": 6
+          },
+          "htmlContent": "",
+          "markdownContent": "",
+          "customChartContent": " // To know more about ECharts , \n// visit: https://echarts.apache.org/examples/en/index.html \n// Example: https://echarts.apache.org/examples/en/editor.html?c=line-simple \n// Define your ECharts 'option' here. \n// 'data' variable is available for use and contains the response data from the search result and it is an array.\noption = {  \n \n};\n  "
         }
       ]
     }
-  ]
+  ],
+  "variables": {
+    "list": [],
+    "showDynamicFilters": true
+  },
+  "defaultDatetimeDuration": {
+    "type": "relative",
+    "relativeTimePeriod": "6h",
+    "startTime": 1782664571009000,
+    "endTime": 1782686171009000
+  }
 }

@@ -20,8 +20,10 @@
 - Metrics:
 	- Business:
 		- ✅ Current bookings
+		- Car pool status: Number of cars not currently booked
 		- Total bookings (made on a given amount of time, counter?)
-		- ✅ Booking creation rate
+		- Booking creation rate: Rate of new bookings per second (5-minute window)
+		- Payment Failure Rate: Rate of failed PSP transactions per second (5-minute window)
 		- ✅ Insufficient funds errors
 		- ✅ Other PSP errors
 		- ✅ Percentage of successful bookings (vs other statuses e.g., pending, failing)
@@ -29,10 +31,11 @@
 		- Percentage of available cars
 		- Number of current debtors + percentage of debtor users
 	- Technical:
-		- Booking saga duration
+		- Average Booking saga duration: Mean time from PENDING creation to ACTIVE or CANCELLED (5-minute window)
 		- 500 Error rate
 		- Availability
 		- Pod recreations
+		- ✅ Bookings stuck in PENDING state — should trend toward zero
 - Alerts:
 	- PSP failures over 5%
 	- Availability below 99%
