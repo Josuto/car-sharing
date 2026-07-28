@@ -159,9 +159,18 @@ This loads `dashboards/car-sharing.json` into OpenObserve and overwrites any exi
 
 ### Run locally
 
+Before the first deploy, create a `.env` file from the provided example and fill in real SMTP credentials:
+
+```bash
+cp .env.example .env
+# edit .env — set ZO_SMTP_HOST, ZO_SMTP_USER_NAME, ZO_SMTP_PASSWORD, ZO_SMTP_FROM_EMAIL
+```
+
+`deploy.sh` reads this file to create the `openobserve-smtp` Kubernetes Secret. OpenObserve uses that Secret when the `openobserve-alert-setup` Job runs: it provisions an email notification destination and wires it to the high-debtor-ratio alert. Without the Secret, the Job will create the alert but email delivery will silently fail. The `.env` file is listed in `.gitignore` and must never be committed.
+
 ```bash
 ./scripts/build-images.sh          # build Docker images and load into local daemon
-./scripts/deploy.sh                # apply manifests, restart pods
+./scripts/deploy.sh                # apply manifests, restart pods (reads .env)
 ./scripts/provision-dashboards.sh  # import OpenObserve dashboard
 ```
 
