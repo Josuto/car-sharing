@@ -17,6 +17,7 @@
 - Delete sensitive info from files e.g., `docker-compose.yml`
 - Access RabbitMQ dashboard
 - Add "perform regression testing after every change you make" to `CLAUDE.md`
+- Design and implement a load testing strategy for the app
 - Metrics:
 	- Business:
 		- ✅ Current bookings
