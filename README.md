@@ -169,6 +169,7 @@ cp .env.example .env
 `deploy.sh` reads this file to create the `openobserve-smtp` Kubernetes Secret. OpenObserve uses that Secret when the `openobserve-alert-setup` Job runs: it provisions an email notification destination and wires it to the high-debtor-ratio alert. Without the Secret, the Job will create the alert but email delivery will silently fail. The `.env` file is listed in `.gitignore` and must never be committed.
 
 ```bash
+colima start --kubernetes          # start local cluster
 ./scripts/build-images.sh          # build Docker images and load into local daemon
 ./scripts/deploy.sh                # apply manifests, restart pods (reads .env)
 ./scripts/provision-dashboards.sh  # import OpenObserve dashboard
