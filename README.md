@@ -2,6 +2,18 @@
 
 A backend-only car-sharing platform built as a demonstration of **spec-driven development** — a methodology for building production-quality software from a formal specification using AI-assisted tooling.
 
+## Contents
+
+1. [What the app is](#1-what-the-app-is)
+2. [How it was built](#2-how-it-was-built)
+3. [Architecture](#3-architecture)
+4. [Data](#4-data)
+5. [External services](#5-external-services)
+6. [Infrastructure](#6-infrastructure)
+7. [Observability](#7-observability)
+8. [Build, run, and test](#8-build-run-and-test)
+9. [Troubleshooting](#9-troubleshooting)
+
 ## 1. What the app is
 
 Car Sharing is an MVP backend platform that enables owners to lend cars to borrowers. It exposes REST endpoints for user management, car registration, and car booking, and handles payment processing through an external Payment Service Provider (PSP). There is no frontend; the system is exercised via HTTP through the Gateway. The scope is intentionally narrow: the goal is a clean, verifiable backend that demonstrates the methodology used to build it.
@@ -173,6 +185,48 @@ colima start --kubernetes          # start local cluster
 ./scripts/build-images.sh          # build Docker images and load into local daemon
 ./scripts/deploy.sh                # apply manifests, restart pods (reads .env)
 ./scripts/provision-dashboards.sh  # import OpenObserve dashboard
+```
+
+### Accessing the cluster
+
+Services inside the cluster are not exposed externally. Use `kubectl port-forward` to reach them from localhost. Each command blocks the terminal — run each in a separate shell or background it.
+
+**OpenObserve** (dashboards, logs, traces, metrics, alerts):
+
+```bash
+kubectl port-forward svc/openobserve 5080:5080 -n car-sharing
+```
+
+Then open `http://localhost:5080` in a browser.
+
+**Gateway** (all API operations — see each service's `README.md` for endpoint details):
+
+```bash
+kubectl port-forward svc/gateway 8080:8080 -n car-sharing
+```
+
+All HTTP requests go to `http://localhost:8080`.
+
+### Inspecting service databases
+
+Each service stores its SQLite database at `/app/data/<service>.db` inside the pod. To open an interactive SQLite shell:
+
+```bash
+# Car Booking
+kubectl exec -it deployment/car-booking -n car-sharing -- \
+  sh -c 'apk add --no-cache sqlite 2>/dev/null; sqlite3 /app/data/car-booking.db'
+
+# User Management
+kubectl exec -it deployment/user-management -n car-sharing -- \
+  sh -c 'apk add --no-cache sqlite 2>/dev/null; sqlite3 /app/data/user-management.db'
+
+# Car Registry
+kubectl exec -it deployment/car-registry -n car-sharing -- \
+  sh -c 'apk add --no-cache sqlite 2>/dev/null; sqlite3 /app/data/car-registry.db'
+
+# Payments
+kubectl exec -it deployment/payments -n car-sharing -- \
+  sh -c 'apk add --no-cache sqlite 2>/dev/null; sqlite3 /app/data/payments.db'
 ```
 
 ### Teardown
