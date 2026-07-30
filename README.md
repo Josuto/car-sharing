@@ -180,3 +180,16 @@ colima start --kubernetes          # start local cluster
 ```bash
 ./scripts/teardown.sh   # destroys the namespace and all PVC data — irreversible
 ```
+
+## 9. Troubleshooting
+
+**`kubectl`: connection refused / `dial tcp 127.0.0.1:XXXXX: connect: connection refused`**
+
+The Kubernetes API server is unreachable. Either Colima is not running or the kubeconfig is stale.
+
+```bash
+colima status          # check whether the VM is up
+colima start --kubernetes   # start it if not running
+colima kubernetes reset     # re-merge kubeconfig if Colima is running but kubectl still fails
+kubectl cluster-info        # verify connectivity before retrying deploy.sh
+```
