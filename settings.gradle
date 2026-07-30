@@ -1,6 +1,6 @@
 rootProject.name = 'car-sharing'
 include 'common', 'gateway', 'user-management', 'car-registry', 'car-booking', 'payments', 'psp-stub'
 
-['gateway', 'user-management', 'car-registry', 'car-booking', 'payments', 'psp-stub'].each {
+['common', 'gateway', 'user-management', 'car-registry', 'car-booking', 'payments', 'psp-stub'].each {
     project(":$it").projectDir = file("services/$it")
 }
