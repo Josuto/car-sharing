@@ -89,7 +89,10 @@ POST /bookings
   → Payments charges the PSP
   → PaymentProcessed(SUCCESS | FAILED) published
   → booking updated to ACTIVE or CANCELLED
-  → if CANCELLED and car returned late: BorrowerFlaggedAsDebtor published
+
+Every 15 min (scheduler):
+  → overdue ACTIVE bookings found (end date passed, car not yet returned)
+  → BorrowerFlaggedAsDebtor published per borrower not already a debtor
 ```
 
 ### Key design decisions
