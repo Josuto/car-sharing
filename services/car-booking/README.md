@@ -1,5 +1,14 @@
 # Car Booking
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 Owns the full booking lifecycle and is the home of the Saga orchestrator. When a borrower requests a booking, the service saves it as `PENDING` and kicks off an asynchronous payment flow; once the payment result arrives, the booking is confirmed (`ACTIVE`) or cancelled. The service also maintains a CQRS read model for available cars — a local projection synced from the Car Registry via RabbitMQ — so that `GET /cars` never requires a cross-service call. A scheduler detects overdue active bookings every 15 minutes and flags the corresponding borrowers as debtors. In a production-ready version this would run far less frequently (e.g. once a day).
@@ -165,6 +174,16 @@ Written by `UserCreatedConsumer` (insert, `isDebtor = false`), `UserDebtorConsum
 ./gradlew :car-booking:bootRun
 ./gradlew :car-booking:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/car-booking.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `car-booking-pvc` | PersistentVolumeClaim | 256 Mi; `ReadWriteOnce`; mounted at `/app/data` |
+| `car-booking` | Deployment | 1 replica; image `car-sharing/car-booking:latest`; port 8083; env from `car-sharing-config` ConfigMap + `OTEL_SERVICE_NAME=car-booking` |
+| `car-booking` | Service | `ClusterIP`; port 8083 — internal only, accessed via Gateway |
 
 ## Observability
 

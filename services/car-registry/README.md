@@ -1,5 +1,14 @@
 # Car Registry
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 Manages the registration of cars into the platform's pool. Owners submit a car via REST; the service persists it and publishes a `CarRegistered` event so that the Car Booking service can maintain its local read model of available cars. No deletion is supported by design — once a car is registered, it stays in the pool.
@@ -65,6 +74,16 @@ One INSERT per `POST /cars` call.
 ./gradlew :car-registry:bootRun
 ./gradlew :car-registry:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/car-registry.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `car-registry-pvc` | PersistentVolumeClaim | 256 Mi; `ReadWriteOnce`; mounted at `/app/data` |
+| `car-registry` | Deployment | 1 replica; image `car-sharing/car-registry:latest`; port 8082; env from `car-sharing-config` ConfigMap + `OTEL_SERVICE_NAME=car-registry` |
+| `car-registry` | Service | `ClusterIP`; port 8082 — internal only, accessed via Gateway |
 
 ## Observability
 

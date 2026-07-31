@@ -1,5 +1,14 @@
 # PSP Stub
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 A lightweight Spring Boot service that simulates the external Payment Service Provider (PSP) used by the Payments service. It holds in-memory account balances seeded at startup and applies the same HTTP contract as a real PSP — `POST /process` decrements balances and returns `409` when funds are insufficient. No code inside the Payments service distinguishes between the stub and a real PSP. See [ADR-002](../../doc/decisions/ADR-002-psp-stub-as-external-service-simulator.md) for the full rationale.
@@ -69,6 +78,15 @@ State is lost on pod restart, which is acceptable for a simulator.
 ./gradlew :psp-stub:bootRun
 ./gradlew :psp-stub:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/psp-stub.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `psp-stub` | Deployment | 1 replica; image `car-sharing/psp-stub:latest`; port 8085; no ConfigMap (no AMQP, no OTel) |
+| `psp-stub` | Service | `ClusterIP`; port 8085 — internal only, accessed by Payments at `http://psp-stub:8085` |
 
 ## Observability
 

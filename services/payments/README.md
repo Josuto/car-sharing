@@ -1,5 +1,14 @@
 # Payments
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 Manages borrower accounts and processes booking payments. The service is entirely event-driven — it has no REST endpoints. When a user is created, the service opens a local account record. When a booking payment is requested, it calculates the fee (€10 × days), calls the external PSP, records the transaction, and publishes the outcome back to the Car Booking service to complete the Saga.
@@ -104,6 +113,16 @@ Response body is discarded; the status code alone determines the outcome.
 ./gradlew :payments:bootRun
 ./gradlew :payments:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/payments.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `payments-pvc` | PersistentVolumeClaim | 256 Mi; `ReadWriteOnce`; mounted at `/app/data` |
+| `payments` | Deployment | 1 replica; image `car-sharing/payments:latest`; port 8084; env from `car-sharing-config` ConfigMap + `OTEL_SERVICE_NAME=payments`, `PSP_BASE_URL=http://psp-stub:8085` |
+| `payments` | Service | `ClusterIP`; port 8084 — internal only, no direct external access |
 
 ## Observability
 

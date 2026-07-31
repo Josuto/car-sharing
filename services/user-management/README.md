@@ -1,5 +1,14 @@
 # User Management
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 Manages the user lifecycle for the car-sharing platform. Admins can create, update, and soft-delete users via unauthenticated REST endpoints. The service also tracks debtor status: when the Car Booking service flags a borrower for a late return, this service marks the corresponding user record as a debtor.
@@ -107,6 +116,16 @@ Database: `user-management.db`. Table: `users`.
 ./gradlew :user-management:bootRun
 ./gradlew :user-management:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/user-management.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `user-management-pvc` | PersistentVolumeClaim | 256 Mi; `ReadWriteOnce`; mounted at `/app/data` |
+| `user-management` | Deployment | 1 replica; image `car-sharing/user-management:latest`; port 8081; env from `car-sharing-config` ConfigMap + `OTEL_SERVICE_NAME=user-management` |
+| `user-management` | Service | `ClusterIP`; port 8081 — internal only, accessed via Gateway |
 
 ## Observability
 

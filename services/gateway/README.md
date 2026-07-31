@@ -1,5 +1,14 @@
 # Gateway
 
+## Contents
+
+1. [Goal](#goal)
+2. [Input ports](#input-ports)
+3. [Output / side effects](#output--side-effects)
+4. [Build / run / test](#build--run--test)
+5. [Infrastructure](#infrastructure)
+6. [Observability](#observability)
+
 ## Goal
 
 Single inbound entry point for the car-sharing platform. All client HTTP traffic passes through the Gateway, which proxies requests to the appropriate downstream service. The Gateway contains no business logic; it is a pure routing layer built on Spring Cloud Gateway (Server MVC).
@@ -46,6 +55,15 @@ None. The Gateway proxies inbound requests — it does not initiate outbound HTT
 # run tests
 ./gradlew :gateway:test
 ```
+
+## Infrastructure
+
+Manifest: `infra/gateway.yaml`
+
+| Resource | Kind | Details |
+|---|---|---|
+| `gateway` | Deployment | 1 replica; image `car-sharing/gateway:latest`; port 8080; env from `car-sharing-config` ConfigMap + `OTEL_SERVICE_NAME=gateway`, `SPRING_PROFILES_ACTIVE=k8s` |
+| `gateway` | Service | `NodePort`; port 8080 — the only service exposed externally in the cluster |
 
 ## Observability
 
