@@ -260,6 +260,8 @@ The following issues and improvements (sourced from [`.claude/specs/SPEC.md §7`
 
 - **Saga integration test** ([#12](https://github.com/Josuto/car-sharing/issues/12)) — no test exercises the full Saga round-trip across Car Booking and Payments. A dedicated `integration-tests` Gradle module using Testcontainers (RabbitMQ), in-memory SQLite, WireMock (PSP stub), and Awaitility is needed to cover the happy path (`ACTIVE`) and failed-payment path (`CANCELLED`).
 
+- **Empty projections on first deployment** — the Car Booking service's local `cars` and `users` projections start empty on first deployment or after a DB wipe; `GET /cars` returns no results until events flow in naturally. Sync-on-startup or event sourcing would fix this but were deferred (see [ADR-001](services/car-booking/doc/decisions/ADR-001-event-projection-replay-strategy.md)).
+
 - **Eventual consistency on car availability** — propagation delay between a car being registered or returned and it appearing in `GET /cars` due to RabbitMQ async delivery. Possible mitigations: optimistic UI, backend double-checks, or message versioning.
 
 - **No dead-letter queue (DLQ)** — failed sync events between Car Registry and Car Booking are silently dropped, and unprocessed Saga messages have no fallback handling. A DLQ strategy should be defined (see [ADR-003](services/car-booking/doc/decisions/ADR-003-saga-timeout-not-implemented.md)).
