@@ -262,6 +262,8 @@ The following issues and improvements (sourced from [`.claude/specs/SPEC.md §7`
 
 - **Eventual consistency on car availability** — propagation delay between a car being registered or returned and it appearing in `GET /cars` due to RabbitMQ async delivery. Possible mitigations: optimistic UI, backend double-checks, or message versioning.
 
-- **Dual-write risk in the Saga** — `CreateBookingHandler` (save booking + publish `BookingPaymentRequested`) and `ProcessPaymentHandler` (save transaction + publish `PaymentProcessed`) both perform a DB write followed by a RabbitMQ publish without atomicity. If the publish fails after a successful write, the event is lost and the Saga stalls. The Outbox pattern resolves this (see ADR-004).
+- **No dead-letter queue (DLQ)** — failed sync events between Car Registry and Car Booking are silently dropped, and unprocessed Saga messages have no fallback handling. A DLQ strategy should be defined (see [ADR-003](services/car-booking/doc/decisions/ADR-003-saga-timeout-not-implemented.md)).
+
+- **Dual-write risk in the Saga** — `CreateBookingHandler` (save booking + publish `BookingPaymentRequested`) and `ProcessPaymentHandler` (save transaction + publish `PaymentProcessed`) both perform a DB write followed by a RabbitMQ publish without atomicity. If the publish fails after a successful write, the event is lost and the Saga stalls. The Outbox pattern resolves this (see [ADR-004](services/car-booking/doc/decisions/ADR-004-choreography-based-saga.md)).
 
 - **PSP mock lacks realism** — the stub has no configurable latency or error profiles. Defining explicit timeout and failure scenarios would make payment testing more representative.
