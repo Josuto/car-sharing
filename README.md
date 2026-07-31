@@ -13,6 +13,7 @@ A backend-only car-sharing platform built as a demonstration of **spec-driven de
 7. [Observability](#7-observability)
 8. [Build, run, and test](#8-build-run-and-test)
 9. [Troubleshooting](#9-troubleshooting)
+10. [Known gaps](#10-known-gaps)
 
 ## 1. What the app is
 
@@ -250,3 +251,17 @@ colima start --kubernetes   # start it if not running
 colima kubernetes reset     # re-merge kubeconfig if Colima is running but kubectl still fails
 kubectl cluster-info        # verify connectivity before retrying deploy.sh
 ```
+
+## 10. Known gaps
+
+The following issues and improvements (sourced from [`.claude/specs/SPEC.md §7`](.claude/specs/SPEC.md) and open GitHub issues) should be addressed before tackling any post-MVP work:
+
+- **Security — full OWASP Top 10 audit** ([#14](https://github.com/Josuto/car-sharing/issues/14)) — a full audit identified multiple findings across Critical, High, and Medium severity. See the issue for the complete list and recommended remediation order.
+
+- **Saga integration test** ([#12](https://github.com/Josuto/car-sharing/issues/12)) — no test exercises the full Saga round-trip across Car Booking and Payments. A dedicated `integration-tests` Gradle module using Testcontainers (RabbitMQ), in-memory SQLite, WireMock (PSP stub), and Awaitility is needed to cover the happy path (`ACTIVE`) and failed-payment path (`CANCELLED`).
+
+- **Eventual consistency on car availability** — propagation delay between a car being registered or returned and it appearing in `GET /cars` due to RabbitMQ async delivery. Possible mitigations: optimistic UI, backend double-checks, or message versioning.
+
+- **Dual-write risk in the Saga** — `CreateBookingHandler` (save booking + publish `BookingPaymentRequested`) and `ProcessPaymentHandler` (save transaction + publish `PaymentProcessed`) both perform a DB write followed by a RabbitMQ publish without atomicity. If the publish fails after a successful write, the event is lost and the Saga stalls. The Outbox pattern resolves this (see ADR-004).
+
+- **PSP mock lacks realism** — the stub has no configurable latency or error profiles. Defining explicit timeout and failure scenarios would make payment testing more representative.
