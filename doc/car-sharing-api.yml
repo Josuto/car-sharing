@@ -1,0 +1,119 @@
+opencollection: 1.0.0
+info:
+  name: Car Sharing API
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+  environments:
+    - name: Local
+      variables:
+        - name: gateway-domain
+          value: http://localhost:8080
+items:
+  - info:
+      name: Book a car
+      type: http
+      seq: 4
+    http:
+      method: POST
+      url: '{{gateway-domain}}/bookings'
+      body:
+        type: json
+        data: |-
+          {
+            "carId": "9d2f31ae-a7bd-4915-a8b8-4e3d18fa2e86",
+            "borrowerId": "8f9d0a2f-c6c3-4490-b74e-caf4045ee060",
+            "startDate": "2026-06-26",
+            "endDate": "2026-06-30"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Create user
+      type: http
+      seq: 1
+    http:
+      method: POST
+      url: '{{gateway-domain}}/users'
+      body:
+        type: json
+        data: |-
+          {
+            "username": "julian",
+            "name": "Julian",
+            "surname": "Muñoz",
+            "bankAccount": "ES341234567893"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: List available cars
+      type: http
+      seq: 4
+    http:
+      method: GET
+      url: '{{gateway-domain}}/cars'
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Register car
+      type: http
+      seq: 2
+    http:
+      method: POST
+      url: '{{gateway-domain}}/cars'
+      body:
+        type: json
+        data: |-
+          {
+            "ownerId":"ab9a05c0-a7f9-46cc-842b-f28e239493b7",
+            "type":"SEDAN",
+            "registrationNumber":"1234ABC"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Return car
+      type: http
+      seq: 5
+    http:
+      method: PUT
+      url: '{{gateway-domain}}/bookings/981f218c-1fb0-4f65-838a-95eea4c08d90'
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-08-15T17:30:25.231Z'
+    exportedUsing: Bruno
