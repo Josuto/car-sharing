@@ -1,5 +1,12 @@
 # Car Sharing
 
+[![CI](https://github.com/Josuto/car-sharing/actions/workflows/ci.yml/badge.svg)](https://github.com/Josuto/car-sharing/actions/workflows/ci.yml)
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-6DB33F?logo=springboot&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-9.4.1-02303A?logo=gradle&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-async%20messaging-FF6600?logo=rabbitmq&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-deployed-326CE5?logo=kubernetes&logoColor=white)
+
 A backend-only car-sharing platform built as a demonstration of **spec-driven development** — a methodology for building production-quality software from a formal specification using AI-assisted tooling.
 
 ## Contents
